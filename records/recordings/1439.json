@@ -1,0 +1,40 @@
+{
+  "id": "1439",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1439_viper-1.mp4",
+  "original": "2026-11-28_19-55-45.mp4",
+  "durationSec": 200.4,
+  "frames": 12024,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "51f6a3f0aed3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 112,
+      "name": "バイパー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-28T20:06+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

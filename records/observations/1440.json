@@ -1,0 +1,739 @@
+[
+  {
+    "id": "1440-01",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": [1416, 2848, 4030, 5316, 6611, 7934, 9323, 10502],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25・25・25・25・25f"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-02",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": [1445, 2877, 4058, 5345, 6640, 7963, 9352, 10531],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25・25・25f"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-03",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": [4021, 10496],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-04",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": [4050, 10525],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-05",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 42.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 23,
+      "high": 62
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（1 番目の事象 f1445 から数えた動画のフレーム）。V・Fの最後の発は 22f、VD・FDの最初の発は 62f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-06",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 56,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 65
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（2 番目の事象 f2877 から数えた動画のフレーム）。V・Fの最後の発は 46f、VD・FDの最初の発は 65f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-07",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 42,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 23,
+      "high": 61
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（3 番目の事象 f4058 から数えた動画のフレーム）。V・Fの最後の発は 22f、VD・FDの最初の発は 61f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-08",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 62,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 24,
+      "high": 100
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（4 番目の事象 f5345 から数えた動画のフレーム）。V・Fの最後の発は 23f、VD・FDの最初の発は 100f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-09",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 47,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 33,
+      "high": 61
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（5 番目の事象 f6640 から数えた動画のフレーム）。V・Fの最後の発は 32f、VD・FDの最初の発は 61f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-10",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 50.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 39,
+      "high": 62
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（6 番目の事象 f7963 から数えた動画のフレーム）。V・Fの最後の発は 38f、VD・FDの最初の発は 62f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-11",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 54,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -17,
+      "high": 125
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（7 番目の事象 f9352 から数えた動画のフレーム）。V・Fの最後の発は -18f、VD・FDの最初の発は 125f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-12",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 59,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 71
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（8 番目の事象 f10531 から数えた動画のフレーム）。V・Fの最後の発は 46f、VD・FDの最初の発は 71f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-13",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 54,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 61
+    },
+    "description": "防御力▼（V・F → VD・FD）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅の、8 回の事象（f1445・2877・4058・5345・6640・7963・9352・10531）の共通部分（事象から数えた動画のフレーム）。V・Fの最後の発の最も遅いものは 46f、VD・FDの最初の発の最も早いものは 61f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は V・F → VD・FD（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。V・F 26・VD・FD 35・区別できない 0・外れ 18・食い違い（VD・FDの最初の発より後のV・Fの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-14",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 630,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 611,
+      "high": 649
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（1 番目の事象 f1445 から数えた動画のフレーム）。VD・FDの最後の発は 610f、V・Fの最初の発は 649f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-15",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 633.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 614,
+      "high": 653
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（2 番目の事象 f2877 から数えた動画のフレーム）。VD・FDの最後の発は 613f、V・Fの最初の発は 653f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-16",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 655.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 618,
+      "high": 693
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（3 番目の事象 f4058 から数えた動画のフレーム）。VD・FDの最後の発は 617f、V・Fの最初の発は 693f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-17",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 641.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 634,
+      "high": 649
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（4 番目の事象 f5345 から数えた動画のフレーム）。VD・FDの最後の発は 633f、V・Fの最初の発は 649f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-18",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 627,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 562,
+      "high": 692
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（5 番目の事象 f6640 から数えた動画のフレーム）。VD・FDの最後の発は 561f、V・Fの最初の発は 692f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-19",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 650,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 626,
+      "high": 674
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（6 番目の事象 f7963 から数えた動画のフレーム）。VD・FDの最後の発は 625f、V・Fの最初の発は 674f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-20",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 657,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 640,
+      "high": 674
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（7 番目の事象 f9352 から数えた動画のフレーム）。VD・FDの最後の発は 639f、V・Fの最初の発は 674f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-21",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 658,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 634,
+      "high": 682
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（8 番目の事象 f10531 から数えた動画のフレーム）。VD・FDの最後の発は 633f、V・Fの最初の発は 682f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-22",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 644.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 640,
+      "high": 649
+    },
+    "description": "防御力▼（VD・FD → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅の、8 回の事象（f1445・2877・4058・5345・6640・7963・9352・10531）の共通部分（事象から数えた動画のフレーム）。VD・FDの最後の発の最も遅いものは 639f、V・Fの最初の発の最も早いものは 649f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VD・FD → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 450〜800f。VD・FD 43・V・F 34・区別できない 0・外れ 2・食い違い（V・Fの最初の発より後のVD・FDの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-23",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 581.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 562,
+      "high": 601
+    },
+    "description": "S1の攻撃力▲（VS・FS → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（1 番目の事象 f826 から数えた動画のフレーム）。VS・FSの最後の発は 561f、V・Fの最初の発は 601f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VS・FS → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 300〜800f。VS・FS 6・V・F 2・区別できない 1・外れ 8・食い違い（V・Fの最初の発より後のVS・FSの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-24",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "record",
+    "value": 581.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 562,
+      "high": 601
+    },
+    "description": "S1の攻撃力▲（VS・FS → V・F）が バイパー・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅の、1 回の事象（f826）の共通部分（事象から数えた動画のフレーム）。VS・FSの最後の発の最も遅いものは 561f、V・Fの最初の発の最も早いものは 601f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は V: 枠 3（バイパー）のモデルの f1500のペレット 10 個までの和、VS: 枠 3（バイパー）のモデルの f300のペレット 10 個までの和、VD: 枠 3（バイパー）のモデルの f900のペレット 10 個までの和、F: 枠 1（I-DOLL・フラワー）のモデルの f1500、FS: 枠 1（I-DOLL・フラワー）のモデルの f300、FD: 枠 1（I-DOLL・フラワー）のモデルの f900。境は VS・FS → V・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 300〜800f。VS・FS 6・V・F 2・区別できない 1・外れ 8・食い違い（V・Fの最初の発より後のVS・FSの発） 0"
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-25",
+    "recording": "1440",
+    "kind": "hit",
+    "use": "compare",
+    "value": 209422,
+    "unit": "ダメージ",
+    "description": "S1 の攻撃力▲の窓の中（戦闘開始から 10 秒）の、I-DOLL・フラワーの通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid。V = バイパーの素、VS = S1 の攻撃力▲あり、VD = 防御 80、F・FS・FD は I-DOLL・フラワーの同じ 3 つ）",
+      "note": "窓の中のフラワーの発はどれも FS の格子に乗る。▲が無ければ 166,172（素のコア）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-26",
+    "recording": "1440",
+    "kind": "hit",
+    "use": "compare",
+    "value": 83117,
+    "unit": "ダメージ",
+    "description": "バイパーのバーストの防御力▼の窓の中の、I-DOLL・フラワーの通常攻撃の胴体・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid。V = バイパーの素、VS = S1 の攻撃力▲あり、VD = 防御 80、F・FS・FD は I-DOLL・フラワーの同じ 3 つ）",
+      "note": "窓の外は 83,086。説明文どおりの防御 80（100 × (1 − 19.83%) = 80.17 の四捨五入）の値。▼が効かなければ 83,086.02、防御が 0 になる読み（課題 2-46）なら 83,239.27"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-27",
+    "recording": "1440",
+    "kind": "hit",
+    "use": "compare",
+    "value": 554476,
+    "unit": "ダメージ",
+    "description": "バイパーの 1 回目のバーストスキルダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "8 回とも印の 58f 後の 1 回の増分で、会心なしは 554,476、会心は 831,714（ほかの発と重なった回を除く）。同じバーストの防御力▼が乗れば 554,568"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-28",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "compare",
+    "value": [58, 58, 58, 58, 58, 58, 58, 58],
+    "unit": "f",
+    "description": "バイパーの II の発動の印（右のバースト欄の六角形が II から III に替わったフレーム）から、バーストスキルダメージ（HUD の増分）までの動画のフレーム（8 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3",
+      "note": "印 1445,2877,4058,5345,6640,7963,9352,10531"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-29",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "compare",
+    "value": 54,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 61
+    },
+    "description": "バイパーのバーストの印から、防御力▼の付き始めまでの動画のフレームの幅（8 回の共通部分。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。V・F = 防御 100、VD・FD = 防御 80）・recipe:burst-panel@4",
+      "note": "1440-13 の 8 回の共通部分。許容は幅の半分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 3,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 7
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-30",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "compare",
+    "value": 644.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 640,
+      "high": 649
+    },
+    "description": "バイパーのバーストの印から、防御力▼の切れ目までの動画のフレームの幅（8 回の共通部分。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。V・F = 防御 100、VD・FD = 防御 80）・recipe:burst-panel@4",
+      "note": "1440-22 の 8 回の共通部分。許容は幅の半分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 4.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1440-31",
+    "recording": "1440",
+    "kind": "timing",
+    "use": "compare",
+    "value": [581.5],
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 562,
+      "high": 601
+    },
+    "description": "戦闘開始（残り時間の表示が出たフレーム）から、S1 の攻撃力▲の切れ目までの動画のフレームの幅（バイパー・フラワーの▲ありの最後の発と▲なしの最初の発で挟む。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）・tools/captures/timer.ts --mode changes",
+      "note": "戦闘開始 f826（WARNING の演出の後の変わり目）。戦闘開始の最初の発から▲あり。バーストの前で止まりが無く、動画の 59f が残り時間の 1 秒（10 秒目の変わり目は戦闘開始の 590f 後）。許容は幅の半分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 19.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0894",
+    "readAt": "2026-11-28"
+  }
+]

@@ -1,0 +1,299 @@
+{
+  "formatVersion": 1,
+  "resourceId": 112,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "ターゲットが出現している場合を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。D の S2 と同じ読み）。付いた後は付き直さず、10 秒で切れる",
+            "en": "Treats \"while the stage target is present\" as the start of battle (the shooting-range target is a stage target present from the start; same reading as D's S2). It is not re-applied and ends after 10 s"
+          },
+          "claims": [
+            "C-1618"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "ターゲットが出現している場合を、戦闘開始とみなす（effects[0] と同じ）",
+            "en": "Treats \"while the stage target is present\" as the start of battle (same as effects[0])"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 1,
+          "claims": [
+            "C-1614"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の愛嬌（単一攻撃対象から除外。直接攻撃を受けると解除。10 秒）は、被弾しない前提では起きない。基礎版には愛嬌を読む効果が無い",
+          "en": "Vamp on entering Full Burst (excluded from single-target attacks, removed upon taking a direct hit; 10 s) has no effect without taking damage. The base version has no effect that reads Vamp",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "フルバーストタイムが発動した時の自分の無敵（1 秒）はダメージに関係しない",
+          "en": "Invulnerable on self (1 s) on entering Full Burst does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "指定した敵 1 機は敵 1 体。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "One designated enemy is the lone enemy. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          },
+          "claims": [
+            "C-1613",
+            "C-0795"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstHit",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "対象（敵 1 体）はターゲットとみなす（射撃場の的はターゲット）。▼は説明文の値で、C-0556・C-0790 の式で効く（射撃場の的の防御力 100 は Lv10 で 80）。バーストのヒットから 10 秒",
+            "en": "The target (the lone enemy) is treated as the stage target (the shooting-range target is one). The decrease uses the description value with the C-0556 and C-0790 formula (the range target DEF 100 becomes 80 at Lv10). 10 s from the Burst hit"
+          },
+          "claims": [
+            "C-1613",
+            "C-0556",
+            "C-0790"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "ターゲットが出現している場合を、戦闘開始とみなす（基礎版の S1 と同じ読み）。付いた後は付き直さず、10 秒で切れる",
+            "en": "Treats \"while the stage target is present\" as the start of battle (same reading as the base S1). It is not re-applied and ends after 10 s"
+          },
+          "claims": [
+            "C-1614",
+            "C-1618"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "ターゲットが出現している場合を、戦闘開始とみなす（effects[0] と同じ）",
+            "en": "Treats \"while the stage target is present\" as the start of battle (same as effects[0])"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "condition": {
+            "selfState": "vamp"
+          },
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 5,
+          "maxStacksRef": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "愛嬌（S2 の effects[0]）の間の通常攻撃の発ごとに 1 スタック（10 スタックまで。付くたびに維持を付け直す）。撮っていない",
+            "en": "One stack per normal attack shot while in Vamp (S2 effects[0]), up to 10 stacks, refreshing the duration on each application. Not recorded"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "condition": {
+            "selfState": "vamp"
+          },
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 8,
+          "maxStacksRef": 9,
+          "durationRef": 10,
+          "assumes": {
+            "ja": "effects[2] と同じきっかけで 1 スタック（10 スタックまで）。撮っていない",
+            "en": "One stack on the same trigger as effects[2], up to 10 stacks. Not recorded"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "vamp",
+          "trigger": "fullBurstStart",
+          "durationUntil": "battleEnd",
+          "target": "self",
+          "assumes": {
+            "ja": "愛嬌（中身なし）を、フルバーストタイムが発動した時に付け、戦闘の終わりまで続く（直接攻撃を受けると外れるのは前提の外。下の notes）。S1 の effects[2]・effects[3] が読む",
+            "en": "Vamp (no contents) is applied on entering Full Burst and lasts until the end of battle (removal on taking a direct hit is out of scope; see the notes). S1 effects[2] and effects[3] read it"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 1,
+          "claims": [
+            "C-1614"
+          ]
+        },
+        {
+          "kind": "burstReentry",
+          "step": "Step2",
+          "assumes": {
+            "ja": "「バースト再突入 2 段階」。バイパーの II の後だけ II にとどまり、このチェーンでまだ撃っていない別の II が撃ってから III に進む（チャイムのバーストと同じ）。撮っていない",
+            "en": "\"Re-enters Burst Stage 2\". Only after Viper's Burst II, the chain stays at II, and another II not yet used in this chain fires before moving to III (same as Chime's Burst). Not recorded"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "愛嬌の単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）。射撃場の 3 分モードでは的が攻撃してくるので、解除が起きうる",
+          "en": "Vamp's exclusion from single-target attacks and its removal upon taking a direct hit do not occur (no damage taken is assumed). In the 3-minute range mode the target attacks, so the removal can occur",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "フルバーストタイムが発動した時の自分の無敵（1 秒）はダメージに関係しない",
+          "en": "Invulnerable on self (1 s) on entering Full Burst does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "指定した敵 1 機は敵 1 体。同じバーストの防御力▼（effects[1]）は乗らない（基礎版のバーストと同じ）",
+            "en": "One designated enemy is the lone enemy. The DEF decrease of the same Burst (effects[1]) does not apply (same as the base Burst)"
+          },
+          "claims": [
+            "C-1614",
+            "C-1613"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstHit",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "対象（敵 1 体）はターゲットとみなす。基礎版のバーストと同じ",
+            "en": "The target (the lone enemy) is treated as the stage target. Same as the base Burst"
+          },
+          "claims": [
+            "C-1614",
+            "C-1613"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 5,
+          "intervalSeconds": 1,
+          "durationRef": 6,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "対象（敵 1 体）はターゲットとみなす。付いた 1 秒後から 1 秒ごとに 10 回（バーストの「1 秒間隔」の持続ダメージで確かめた形。ディーゼル：ウィンタースイーツのバースト）。付くのはバーストの発動の時点で、ヒット（印の 58f 後）と防御力▼より前になる（遅れの表の effectFrames は未測定の 0）。撮っていない",
+            "en": "The target (the lone enemy) is treated as the stage target. Every 1 s from 1 s after application, 10 ticks (the form confirmed for a Burst \"every second\" sustained damage; Diesel: Winter Sweets' Burst). It is applied at the Burst activation, before the hit (58 f after the mark) and the DEF decrease (effectFrames in the delay table is an unmeasured 0). Not recorded"
+          },
+          "claims": [
+            "C-1614"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

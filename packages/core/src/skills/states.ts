@@ -279,6 +279,8 @@ export const NAMED_STATES = {
   attract: { name: { ja: 'ヘイト', en: 'Attract' }, holder: 'ally' },
   /** 隠れ身（ロザンナの S1・S2）。単一攻撃対象からの除外と、直接攻撃を受けた時の解除は前提の外 */
   concealment: { name: { ja: '隠れ身', en: 'Concealment' }, holder: 'ally' },
+  /** 愛嬌（バイパーの宝物版の S2）。単一攻撃対象からの除外と、直接攻撃を受けた時の解除は前提の外 */
+  vamp: { name: { ja: '愛嬌', en: 'Vamp' }, holder: 'ally' },
   /** 狂気（ロザンナの宝物版の S2）。味方の戦闘不能時の付与は前提の外 */
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
   /** ソードコイン（ルージュの S2） */

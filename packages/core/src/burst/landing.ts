@@ -177,6 +177,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [22], delays: { hitFrames: 15, effectFrames: 15, hitOffsets: [0, 6, 11] }, claim: 'C-1402' },
   // ミカ: 効果（敵の防御力▼）の付き始めは印の −27〜54f までしか挟めず、1 ヒット目と同じ 28f にした。2 ヒットのそれぞれが付け直す（トリガー burstHit。C-1519）
   { resourceIds: [61], delays: { hitFrames: 28, effectFrames: 28, hitOffsets: [0, 35] }, claim: 'C-1516' },
+  // バイパー（基礎版・宝物版）: 効果（敵の防御力▼）はヒットから付く（トリガー burstHit）。撮ったのは基礎版で、宝物版は同じとみなす。
+  // 宝物版の持続ダメージ（burstUse）の発火のフレームは確かめていない
+  { resourceIds: [112], delays: { hitFrames: 58, effectFrames: 0 }, claim: 'C-1613' },
   // ラプラス：アルティメットヒーロー
   { resourceIds: [103], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0683' },
   // シンデレラ：クリスタルウェーブ

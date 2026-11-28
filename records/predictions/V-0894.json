@@ -1,0 +1,198 @@
+{
+  "verification": "V-0894",
+  "note": "I-DOLL・フラワー（I・1 枠目）・バイパー（II・3 枠目・操作）・オートバースト ON の予測。電撃の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 の窓はモデルでは f0〜588、1 回目のバーストは f603（I）・f612（II）。防御力▼の窓は f612〜1200。トロニー・プロダクト23 の形（防御が 0。課題 2-46）は定義の差し替えで書けないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 304,
+      "slot": 1
+    },
+    {
+      "rid": 112,
+      "slot": 3,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は戦闘開始から 10 秒、味方全体に攻撃力 25.98%▲。バーストのヒットから 10 秒、的の防御力 100 を 80 にする）"
+    },
+    {
+      "id": "H0-s1",
+      "note": "S1 の攻撃力▲（skill1 の effects[0]）が無い（射撃場の的はターゲットでない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 112,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-def",
+      "note": "バーストの防御力▼（burst の effects[1]）が無い（射撃場の的はターゲットでない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 112,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "viper-hit-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "S1 の窓の中のバイパーの 1 ペレット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "viper-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "S1 と防御力▼の窓の外（1 回目の▼が切れた後・2 回目のバーストの前）のバイパーの 1 ペレット"
+    },
+    {
+      "id": "viper-hit-defdown",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の防御力▼の窓の中のバイパーの 1 ペレット（III がいないのでフルバーストは無い）"
+    },
+    {
+      "id": "viper-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のバイパーのバーストスキルダメージ（会心なし）。同じバーストの防御力▼は乗らない"
+    },
+    {
+      "id": "flower-hit-defdown",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の防御力▼の窓の中の I-DOLL・フラワーの 1 ヒット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "flower-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "S1 と防御力▼の窓の外の I-DOLL・フラワーの 1 ヒット"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "c497207e20e9a81e10fe54711418aaa0087a2274",
+    "values": {
+      "H1": {
+        "viper-hit-s1": 33268.278000000006,
+        "viper-hit-base": 26403.0384,
+        "viper-hit-defdown": 26407.446400000004,
+        "viper-burst-hit": 554475.786,
+        "flower-hit-defdown": 83116.67,
+        "flower-hit-base": 83086.01999999999
+      },
+      "H0-s1": {
+        "viper-hit-s1": 26403.0384,
+        "viper-hit-base": 26403.0384,
+        "viper-hit-defdown": 26407.446400000004,
+        "viper-burst-hit": 554475.786,
+        "flower-hit-defdown": 83116.67,
+        "flower-hit-base": 83086.01999999999
+      },
+      "H0-def": {
+        "viper-hit-s1": 33268.278000000006,
+        "viper-hit-base": 26403.0384,
+        "viper-hit-defdown": 26403.0384,
+        "viper-burst-hit": 554475.786,
+        "flower-hit-defdown": 83086.01999999999,
+        "flower-hit-base": 83086.01999999999
+      }
+    }
+  }
+}

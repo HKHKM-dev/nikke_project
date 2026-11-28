@@ -1,0 +1,29 @@
+{
+  "id": "C-1614",
+  "text": "バイパーの撮っていない行は、説明文の読みで書く: 基礎版の S1 の味方全体の命中率 値 03 %▲（攻撃力▲と同じく戦闘開始から 値 04 秒）と S2 の自分の命中率 値 01 %▲（持続）は、いまの命中率▲の式で効く（SG ではコア命中率と近の弾丸命中率。課題 2-1）。宝物版の S1 の攻撃力▲・命中率▲、S2 の命中率▲、バーストのダメージと防御力▼は、基礎版と同じ文の読み（値は説明文の値）。宝物版にだけある行: S2 のフルバーストタイムが発動した時の愛嬌（持続）、S1 の愛嬌状態の時に限り攻撃した時の持続ダメージ 値 05 %▲・命中率 値 08 %▲（発ごとに 1 スタック、10 スタック、10 秒）、S2 のバーストスキル使用時のバースト再突入 2 段階（チャイムのバーストと同じ）、バーストの対象がターゲットなら付く持続ダメージ 値 05 %（付いた 1 秒後から 1 秒ごと。ディーゼル：ウィンタースイーツのバーストと同じ形）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/112.json` の skills と treasure.skills）。基礎版の S1・バーストの同じ文の読みは、撮った基礎版で確かめた（C-1618・C-1613）。命中率▲は、この編成のモデルのバイパーのコア命中率が S1 の窓の中でも外でも 1 で、命中率▲の有無で予測が変わらないので見分けていない（V-0894 の予測ファイル）。宝物版は撮っていない（plan/design-viper.md 4 節の論点 2）。V-0894",
+  "model": "反映（data/skills/112.json の skill1 の effects[1]・skill2 の effects[0]・treasureSkills の全部の効果）。SG の中近・中遠・遠の弾丸命中率に命中率▲を効かせる式は未実装（課題 2-1）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/112.json の skill1 の effects[1]",
+      "data/skills/112.json の skill2 の effects[0]",
+      "data/skills/112.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/112.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/112.json の treasureSkills.skill1 の effects[2]",
+      "data/skills/112.json の treasureSkills.skill1 の effects[3]",
+      "data/skills/112.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/112.json の treasureSkills.skill2 の effects[1]",
+      "data/skills/112.json の treasureSkills.skill2 の effects[2]",
+      "data/skills/112.json の treasureSkills.burst の effects[0]",
+      "data/skills/112.json の treasureSkills.burst の effects[1]",
+      "data/skills/112.json の treasureSkills.burst の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "撮っていない行と見分けていない行を、説明文と撮った版の同じ文の読みに当てた推論にとどめる"
+}

@@ -9,7 +9,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { HeldItemView } from '../skills/holders/history.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { describeRuns, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const GUILTY = 404;
 const LUDMILLA = 190;
@@ -108,4 +108,4 @@ describe('マイティストンプ（撮影 B）', () => {
   });
 });
 
-describeEveryShotInOneGroup({ SOLO, CHAIN });
+describeRuns({ SOLO, CHAIN });
