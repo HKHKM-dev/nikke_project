@@ -1,0 +1,24 @@
+{
+  "id": "C-1620",
+  "text": "レーベルのバーストの妄想共有は、バーストの使用から 10 秒付き、その間だけ S2 の攻撃力▲が、レーベルを除く味方全体に、レーベルのバフ前攻撃力の 80.36%（スキル発動者基準）として乗る。レーベル自身の 1 ヒットは変わらない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1446-24`・`1446-25`・`1446-26`・`1446-27`・`1446-28`。V-0900",
+  "model": "data/skills/582.json（burst の妄想共有の付与と、skill2 の passive の excludeSelf・while）。packages/core/src/skills/parse/timed.ts の parsePassiveEffect・skills/composition.ts の fixedTargetsOf（passive の自分を除く）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/582.json の skill2 の effects[2]", "data/skills/582.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "攻撃力▲の量は説明文の値（skill2 の {04}）とスキル発動者基準の式（casterAttack）、10 秒は説明文の値（burst の {03}）",
+  "minimal": [
+    {
+      "observations": "*",
+      "element": ["レーベル skill1.notes[0]", "レーベル skill1.notes[1]"],
+      "reason": "S1 の 2 つ（妄想崩壊と、妄想が切れた後の付け直し）は妄想が切れたときだけ起きる。単騎の 2 本は HUD の上のバリアのバーが満タンまで残り、147 回のヒットはどれも攻撃力▲の乗った格子の値で、ヒットの間隔はリロードの 82f（2 回）と外れた 1 発を挟む 10f のほかは 3〜6f で、気絶（1 秒）で止まった間が無い。録画 1446 はレーベルが操作でなく、的の攻撃を受けない（戦闘履歴の盾の欄が 0）",
+      "decided": "2026-11-28"
+    }
+  ]
+}

@@ -963,7 +963,9 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   const targetClass = parseTargetClass(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
   const targetCharacter = parseTargetCharacter(v, target, path);
-  if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
+  // 「自分を除く…味方全体」は allies の always だけ（plan/design-label.md 2.1 節）
+  if (v.excludeSelf !== undefined && (target !== 'allies' || v.excludeSelf !== 'always'))
+    fail(`${path}.excludeSelf`, 'passive only takes excludeSelf "always" with target "allies"');
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
   if (v.targetLeftmost !== undefined) fail(`${path}.targetLeftmost`, 'targetLeftmost is only allowed in timed');
@@ -1007,6 +1009,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (targetClass !== undefined) effect.targetClass = targetClass;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (targetCharacter !== undefined) effect.targetCharacter = targetCharacter;
+  if (v.excludeSelf !== undefined) effect.excludeSelf = 'always';
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.condition !== undefined) {

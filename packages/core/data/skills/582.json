@@ -1,0 +1,156 @@
+{
+  "formatVersion": 1,
+  "resourceId": 582,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "delusion",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "妄想（自分へのバリア）は、中身なしの持続の状態とみなし、被弾でバリアの HP が尽きて切れる分は扱わない（要件 4.2 節）。家族はバリアなので、「バリア適用状態」を読む効果はレーベルをバリア適用状態とみる。バリアの量はダメージに関係しない",
+            "en": "Delusion (a shield on self) is taken as a continuous state without contents; running out from enemy hits is not modeled (requirements 4.2). It is in the barrier family, so effects reading the barrier state see Label as shielded. The shield amount does not affect damage"
+          },
+          "claims": [
+            "C-1619"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "妄想が終了した時の妄想崩壊（想像失恋：単一攻撃の対象から除外・気絶。1 秒 × 妄想崩壊の回数）は、被弾で妄想のバリアが尽きたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）。起きれば、気絶の間はレーベルが撃たない",
+          "en": "Delusion Shattered on Delusion ending (Imagined Heartbreak: untargetable by single-target attacks, and stun; 1 s × the Delusion Shattered count) happens only after hits have used up the Delusion shield, so it never happens in the model, which has no damage taken (requirements 4.2). If it happened, Label would not fire while stunned",
+          "kind": "outOfScope",
+          "reads": [
+            "barrier"
+          ],
+          "effect": {
+            "kind": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-1619"
+          ]
+        },
+        {
+          "ja": "通常攻撃をした時・バーストスキルを使用した時の、妄想状態でなければ自分に付く妄想は、被弾で妄想が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
+          "en": "The Delusion applied on self on a normal attack or on Burst use while not in Delusion happens only after hits have broken Delusion, so it never happens in the model, which has no damage taken (requirements 4.2)",
+          "kind": "outOfScope",
+          "reads": [
+            "barrier"
+          ],
+          "effect": {
+            "kind": "state",
+            "target": "self",
+            "trigger": "normalShot"
+          },
+          "claims": [
+            "C-1619"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "burstGaugeSpeed",
+          "ref": 1,
+          "durationUntil": "battleEnd",
+          "condition": {
+            "selfState": "delusion"
+          },
+          "assumes": {
+            "ja": "「自分が妄想状態の時に限り」「持続」。妄想は戦闘の間続く静的な状態（被弾が無ければ切れない）なので、戦闘開始時から戦闘の終わりまでの効果に条件を付けて書く",
+            "en": "\"Only while in Delusion\", continuous. Delusion is a static state lasting the whole battle (it never breaks without damage taken), so it is written as a start-to-end effect with the condition"
+          },
+          "claims": [
+            "C-1619"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationUntil": "battleEnd",
+          "condition": {
+            "selfState": "delusion"
+          },
+          "assumes": {
+            "ja": "effects[0] と同じ書き方",
+            "en": "Written like effects[0]"
+          },
+          "claims": [
+            "C-1619"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "excludeSelf": "always",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "while": {
+            "selfState": "sharedDelusion"
+          },
+          "assumes": {
+            "ja": "自分（レーベル）に妄想共有が付いている間（バーストの使用から 10 秒）だけ、自分を除く味方全体に、自分のバフ前攻撃力の {04}% を足す",
+            "en": "Only while this unit (Label) has Shared Delusion (10 s from Burst use), adds {04}% of this unit's pre-buff ATK to all allies except this unit"
+          },
+          "claims": [
+            "C-1620"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、自分を除く味方全体への電撃コードの敵から受けるダメージ▼（5 秒）と、妄想状態の時の自分の電撃コードの敵から受けるダメージ▼は、ダメージに関係しない",
+          "en": "The damage taken from Electric Code enemies down for all allies except self at the start of battle (5 s) and on self while in Delusion do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "sharedDelusion",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 3,
+          "assumes": {
+            "ja": "妄想共有（自分が展開したバリアに無敵付与）は中身なしの状態とみなす。無敵付与はダメージに関係せず、S2 の攻撃力▲の条件が読むだけ",
+            "en": "Shared Delusion (the shield created by Label becomes invulnerable) is taken as a state without contents. The invulnerability does not affect damage; only the S2 ATK up reads the state"
+          },
+          "claims": [
+            "C-1620"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の最大HP▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self (10 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxHp",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

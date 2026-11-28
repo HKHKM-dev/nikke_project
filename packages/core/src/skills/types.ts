@@ -564,6 +564,8 @@ export type PassiveEffect = FixedTargetFields & {
    * target が 'allies' のときだけ書ける。編成にいなければ誰にも付かない。編成で決まるので最上位の skills/composition.ts で枠を決める
    */
   targetCharacter?: number;
+  /** 「自分を除く…味方全体」。target が 'allies' のときだけ書け、値は 'always' だけ（plan/design-label.md 2.1 節） */
+  excludeSelf?: 'always';
   /** 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。targetWeapon と同じ場所に書ける（plan/design-asuka.md 2.2 節） */

@@ -1,0 +1,35 @@
+{
+  "id": "1445",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1445_ar_label_solo.mp4",
+  "original": "2026-11-28_21-20-25.mp4",
+  "durationSec": 65.6,
+  "frames": 3938,
+  "fps": 60,
+  "sizeMB": 79.5,
+  "sha256": "5e52da718a2f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 582,
+      "name": "レーベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0900 の撮影 S（レーベル単騎・BURST バーが満タンになるまで）",
+  "backup": {
+    "at": "2026-11-28T21:27+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

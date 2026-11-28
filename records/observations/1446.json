@@ -1,0 +1,660 @@
+[
+  {
+    "id": "1446-01",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": [1296, 2474, 3652, 4830, 6008, 7225, 8403, 9581, 10759],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25・25・25・25・25・25f"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-02",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": [2468, 3645, 4824, 6002, 8397, 9575, 10753],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-03",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 42.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 2,
+      "high": 83
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（1 番目の事象 f1296 から数えた動画のフレーム）。J・Jxの最後の発は 1f、JS・JxSの最初の発は 83f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-04",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -27,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -92,
+      "high": 38
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（2 番目の事象 f2474 から数えた動画のフレーム）。J・Jxの最後の発は -93f、JS・JxSの最初の発は 38f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-05",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 41,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1,
+      "high": 81
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（3 番目の事象 f3652 から数えた動画のフレーム）。J・Jxの最後の発は 0f、JS・JxSの最初の発は 81f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-06",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 9.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 21
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（4 番目の事象 f4830 から数えた動画のフレーム）。J・Jxの最後の発は -3f、JS・JxSの最初の発は 21f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-07",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 10.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -1,
+      "high": 22
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（5 番目の事象 f6008 から数えた動画のフレーム）。J・Jxの最後の発は -2f、JS・JxSの最初の発は 22f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-08",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 7.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -4,
+      "high": 19
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（6 番目の事象 f7225 から数えた動画のフレーム）。J・Jxの最後の発は -5f、JS・JxSの最初の発は 19f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-09",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 17,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -18,
+      "high": 52
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（7 番目の事象 f8403 から数えた動画のフレーム）。J・Jxの最後の発は -19f、JS・JxSの最初の発は 52f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-10",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -10.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -87,
+      "high": 66
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（8 番目の事象 f9581 から数えた動画のフレーム）。J・Jxの最後の発は -88f、JS・JxSの最初の発は 66f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-11",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 6,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -47,
+      "high": 59
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅（9 番目の事象 f10759 から数えた動画のフレーム）。J・Jxの最後の発は -48f、JS・JxSの最初の発は 59f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-12",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": 10.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 2,
+      "high": 19
+    },
+    "description": "妄想共有の攻撃力▲（J・Jx → JS・JxS）が ジル の 1 発で替わるまでの時刻の幅の、9 回の事象（f1296・2474・3652・4830・6008・7225・8403・9581・10759）の共通部分（事象から数えた動画のフレーム）。J・Jxの最後の発の最も遅いものは 1f、JS・JxSの最初の発の最も早いものは 19f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は J・Jx → JS・JxS（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜180f。J・Jx 29・JS・JxS 34・区別できない 0・外れ 474・食い違い（JS・JxSの最初の発より後のJ・Jxの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-13",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -15.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": 25
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（1 番目の事象 f1896 から数えた動画のフレーム）。JS・JxSの最後の発は -57f、J・Jxの最初の発は 25f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-14",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -48,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -83,
+      "high": -13
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（2 番目の事象 f3074 から数えた動画のフレーム）。JS・JxSの最後の発は -84f、J・Jxの最初の発は -13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-15",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -40.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -105,
+      "high": 24
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（3 番目の事象 f4252 から数えた動画のフレーム）。JS・JxSの最後の発は -106f、J・Jxの最初の発は 24f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-16",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -36,
+      "high": 33
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（4 番目の事象 f5430 から数えた動画のフレーム）。JS・JxSの最後の発は -37f、J・Jxの最初の発は 33f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-17",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -47.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -82,
+      "high": -13
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（5 番目の事象 f6608 から数えた動画のフレーム）。JS・JxSの最後の発は -83f、J・Jxの最初の発は -13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-18",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -3,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -14,
+      "high": 8
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（6 番目の事象 f7825 から数えた動画のフレーム）。JS・JxSの最後の発は -15f、J・Jxの最初の発は 8f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-19",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -16,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -27,
+      "high": -5
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（7 番目の事象 f9003 から数えた動画のフレーム）。JS・JxSの最後の発は -28f、J・Jxの最初の発は -5f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-20",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -73,
+      "high": 70
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（8 番目の事象 f10181 から数えた動画のフレーム）。JS・JxSの最後の発は -74f、J・Jxの最初の発は 70f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-21",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -10.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -22,
+      "high": 1
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅（9 番目の事象 f11359 から数えた動画のフレーム）。JS・JxSの最後の発は -23f、J・Jxの最初の発は 1f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-22",
+    "recording": "1446",
+    "kind": "timing",
+    "use": "record",
+    "value": -13.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -14,
+      "high": -13
+    },
+    "description": "妄想共有の攻撃力▲（JS・JxS → J・Jx）が ジル の 1 発で替わるまでの時刻の幅の、9 回の事象（f1896・3074・4252・5430・6608・7825・9003・10181・11359）の共通部分（事象から数えた動画のフレーム）。JS・JxSの最後の発の最も遅いものは -15f、J・Jxの最初の発の最も早いものは -13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 1（レーベル）のモデルの f200、J: 枠 3（ジル）のモデルの f200、Jx: 枠 3（ジル）のモデルの f230、JS: 枠 3（ジル）のモデルの f600、JxS: 枠 3（ジル）のモデルの f770。境は JS・JxS → J・Jx（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜150f。JS・JxS 25・J・Jx 35・区別できない 0・外れ 403・食い違い（J・Jxの最初の発より後のJS・JxSの発） 0"
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-23",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 21092,
+    "unit": "ダメージ",
+    "description": "レーベル（AI）の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。妄想共有の外",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "距離ボーナスの無いヒットは f2653 から。2 周目のレーベルのバースト（I → II の替わり目 f2474。1446-01）の妄想共有が切れた後（f3062〜f3652）のヒット。モデルの値は周で変わらないので、予測の指標と同じ 1 周目のモデルのフレームで比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [3062, 3652]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-24",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 21092,
+    "unit": "ダメージ",
+    "description": "レーベル（AI）の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。妄想共有の間",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "2 周目の妄想共有の間（I → II の替わり目 f2474 の 2〜585f 後。1446-03〜22）のヒット（f2653〜f3057）も 21,092 で、外と同じ。モデルの値は周で変わらないので、予測の指標と同じ 1 周目のモデルのフレームで比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2653, 3057]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-25",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 143930,
+    "unit": "ダメージ",
+    "description": "ジル（操作）の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり・S1 の通常攻撃ダメージ▲の窓の中）。妄想共有の前",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 回目のレーベルのバースト（I → II の替わり目 f1296）の前の f859〜f1224 のジルの胴体の非会心のヒットは、どれも 143,930"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [859, 1224]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-26",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 221125,
+    "unit": "ダメージ",
+    "description": "ジルの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり・S1 の窓の中）。妄想共有の間",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1 周目の妄想共有の間（f1298〜f1883）のジルの胴体の非会心のヒット（f1402〜f1839）は、どれも 221,125"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1402, 1839]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-27",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 170096,
+    "unit": "ダメージ",
+    "description": "ジルの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし・S1 の窓の中）。妄想共有の間",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "2 周目の妄想共有の間（f2476〜f3061）のジルの胴体の非会心のヒット（f2767〜f2990）は、どれも 170,096。モデルの値は周で変わらないので、予測の指標と同じ 1 周目のモデルのフレームで比べる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [2767, 2990]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1446-28",
+    "recording": "1446",
+    "kind": "hit",
+    "use": "compare",
+    "value": 110715,
+    "unit": "ダメージ",
+    "description": "ジルの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし・S1 の窓の中）。妄想共有が切れた後",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "2 周目の妄想共有が切れた後（3 周目の I → II の替わり目 f3652 より前）のジルの胴体の非会心のヒット（f3084〜f3579）は、どれも 110,715。モデルの値は周で変わらないので、予測の指標と同じ 1 周目のモデルのフレームで比べる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [3084, 3579]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  }
+]

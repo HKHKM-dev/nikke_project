@@ -225,7 +225,8 @@ export function fixedTargetsOf(
   const side = persona?.targetAdjacent;
   const adjacent = side === undefined ? undefined : adjacentSlotsOf(characters, selfIndex, withSelf, side);
   const step = persona?.targetBurstStep;
-  const excludeSelf = windowed && effect.target === 'allies' && effect.excludeSelf !== undefined;
+  const excludeSelf =
+    (windowed || effect.kind === 'passive') && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
   characters.forEach((c, i) => {
     if (c === null) return;

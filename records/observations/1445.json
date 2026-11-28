@@ -1,0 +1,75 @@
+[
+  {
+    "id": "1445-01",
+    "recording": "1445",
+    "kind": "count",
+    "use": "compare",
+    "value": 147,
+    "unit": "ヒット",
+    "description": "レーベル（AR・操作・AUTO 射撃 ON）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "最初のヒットは f841。バーが消えたのは f1718 で、そのフレームのヒットが 147 番目。増分は 147 個とも 1 ヒットの格子の値（27,420・37,966・48,512・59,059。距離ボーナスあり）で、読めないフレームを挟んだ増分は無い。マガジンは 1〜60・61〜120・121 番目から。外れた発は数えない（総ダメージが増えない）。147 × 4,000 × 1.704 = 1,001,952 で、通常攻撃のほかのゲージは入っていない。gauge.ts の溜め始め・満タン（最初のヒットより前）は戦闘の前の表示なので数えない。HUD の上のバリアのバー（妄想）は満タンまで残る（画で確かめた）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [841, 1718]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1445-02",
+    "recording": "1445",
+    "kind": "hit",
+    "use": "compare",
+    "value": 21092,
+    "unit": "ダメージ",
+    "description": "レーベル単騎の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "距離ボーナスの無いヒットは f2651 から（それより前は距離ボーナスありの 27,420）。f2651〜f3818 の胴体の非会心のヒットは 97 個とも 21,092。オートバースト OFF でバーストを使っていない。モデルの値は周で変わらないので、予測の指標と同じ 1 周目のモデルのフレームで比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2651, 3818]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0900",
+    "readAt": "2026-11-28"
+  }
+]
