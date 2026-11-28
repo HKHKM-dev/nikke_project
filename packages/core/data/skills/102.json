@@ -70,21 +70,23 @@
             "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The wait to the first shot is read from recordings: 136 frames after 00.00 of the Burst III timer (V-0824). As the wait is a fixed value, Charge Speed ups do not shorten it in the model (in the recorded team, the S1 Charge Speed up Maxwell always had at her bursts is inside the value). The charge time has no \"fixed\", but whether other allies’ Charge Speed ups shorten it is unverified. On the range target every changed shot hit the core. The additional Pierce is the weaponChange pierce, so allies’ Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot follows the current model (unverified)"
           },
           "claims": [
-            "C-1433"
+            "C-1433",
+            "C-1567"
           ]
         }
       ],
       "notes": [
         {
-          "ja": "持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない",
-          "en": "When the base SR fired just before the swap (10 to 15 frames before 00.00 of the Burst III timer), the changed shot came 3 to 8 frames later (V-0824). The model uses a fixed wait and does not look at the base SR state",
+          "ja": "持ち替え（III のタイマーの 00.00 の 4〜5f 前）の時に基礎の SR の構え解除（最後の発から 13f）が終わっていない回は、変更後の武器の 1 発がその残りだけ遅れる（1〜8f。C-1567）。モデルは待ちの即値で、基礎の SR の状態を見ない。構え解除の途中で早くなるレッドフード（C-0897）の規則と向きが逆で、共通の規則にできていない",
+          "en": "When the base SR was still in its aim-out (13 frames after its last shot) at the swap (4 to 5 frames before 00.00 of the Burst III timer), the changed shot came later by the rest of the aim-out (1 to 8 frames. C-1567). The model uses a fixed wait and does not look at the base SR state. This goes the opposite way from Red Hood (C-0897), whose first shot is earlier when swapping during the aim-out, so no common rule covers both",
           "kind": "unimplemented",
           "effect": {
             "kind": "weaponChange",
             "trigger": "burstUse"
           },
           "claims": [
-            "C-1433"
+            "C-1433",
+            "C-1567"
           ]
         }
       ]

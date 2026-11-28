@@ -2174,8 +2174,8 @@ export type WeaponChangeEffect = {
    * 持ち替え（この変更を起こした発動がフルバーストに入るなら窓の始まり、ほかは変更の窓が射手に見える最初の
    * フレーム）から変更後の武器の最初の発までのフレーム（即値。録画で読む。plan/design-red-hood.md 7.1 節の論点 13。
    * V-0639）。持ち替えの時の
-   * 基礎の武器が、リロード中ならそのまま、構え解除の途中（最後の発から WeaponModel.aimOutFrames 未満）なら構え解除の終わりから数え、
-   * 構え直し・チャージの途中なら構え解除 1 回分（aimOutFrames）を足す（frame/firstPass.ts）。firstShotDelayFrames とは組まない
+   * 基礎の武器の状態で武器が空くフレーム（frame/shooter.ts の weaponFreeFrameAtSwap。構え解除の途中なら構え解除の終わり、リロード中なら
+   * そのまま、構えたままなら構え解除 1 回分（aimOutFrames）の後。C-0897・C-1566）から数える。firstShotDelayFrames とは組まない
    */
   firstShotAfterSwapFrames?: number;
   /**

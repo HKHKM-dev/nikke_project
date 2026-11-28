@@ -42,9 +42,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(windows.length).toBeGreaterThanOrEqual(2);
     expect(runs.length).toBeGreaterThanOrEqual(2);
     runs.forEach((run, k) => {
-      // 最初の発は、その前に始まったフルバーストの窓が射手に見えてから 112f（firstShotDelayFrames）。戻るのは最後の発の次のフレーム
+      // 最初の発は、持ち替えの時の元の SG の状態で武器が空くフレームから 99f（firstShotAfterSwapFrames）。窓の始まりからは、リロード中
+      // （構え解除の明けた後）の 100f から、撃っている途中（構え解除 1 回分の後）の 113f まで（C-1566）。戻るのは最後の発の次のフレーム
       const start = windows.filter((w) => w.start <= run[0]!).at(-1)!.start;
-      expect(run[0]! - start).toBe(113);
+      expect(run[0]! - start).toBeGreaterThanOrEqual(100);
+      expect(run[0]! - start).toBeLessThanOrEqual(113);
       expect(ends[k]).toBe(run.at(-1)! + 1);
       // 味方の最大装弾数▲が無ければ 6 発（的のジャンプでハイドしても込め直さない）
       if (input.slots.every((s) => s === null || [311, 301, DRAKE_GV].includes(s.character.resourceId)))

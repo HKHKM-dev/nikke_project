@@ -644,5 +644,59 @@
     },
     "source": "V-0818",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1295-27",
+    "recording": "1295",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [135, 135, 123],
+    "description": "2〜4 回目のフルバーストの、III のタイマーの 00.00 からドレイク：グレイトヴィランのオーバーオーバードライブの最初の発までの動画のフレーム。2・3 回目は元の SG を撃っている途中（最後の発は 00.00 の 27f・15f 前）、4 回目は元の SG がリロード中（マガジンの最後の発は 00.00 の 47f 前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00、tools/captures/reticle-ammo.ts",
+      "note": "最初の発は 1295-23 と同じ。元の SG の発は、10 ペレットまでの和の格子に合う 40f おきの増分（ソルジャーF.A. の発は 1 桁小さい）で、照準の左の残弾の減りと合わせた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": "1,2,3"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0879",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1295-28",
+    "recording": "1295",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [
+      [8, 4, 135],
+      [27, 6, 135],
+      [15, 5, 135],
+      [47, 0, 123]
+    ],
+    "description": "フルバーストごと（1〜4 回目）の、[元の SG の最後の発が III のタイマーの 00.00 の何 f 前か, その発の後の残弾, 00.00 からオーバーオーバードライブの最初の発まで]（動画のフレーム）。残弾 0 の回は、持ち替えの時にリロード中",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00、tools/captures/reticle-ammo.ts",
+      "note": "残弾の表示はダメージの数字が重なると読めないので、減りは前後の読めたフレームと HUD の増分の 40f おきの並びで決めた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0879",
+    "readAt": "2026-11-28"
   }
 ]
