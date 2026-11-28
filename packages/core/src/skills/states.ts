@@ -75,6 +75,8 @@ export const NAMED_STATES = {
   barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
   /** ナノコーティング（キロの S1）。被弾で減って壊れる分は扱わない（plan/design-kilo.md 2.1 節） */
   nanoCoating: { name: { ja: 'ナノコーティング', en: 'Nano Coating' }, holder: 'ally', family: 'barrier' },
+  /** 必死の抵抗（モリーの S1）。被弾で減って壊れる分は扱わない（C-1590） */
+  struggle: { name: { ja: '必死の抵抗', en: 'Struggle' }, holder: 'ally', family: 'barrier' },
   /** デコイ（シンデレラの S2）。被弾で壊れる分は扱わない（plan/design-skill-stage6.md 2.4 節）。判定は自分のデコイだけ */
   decoy: { name: { ja: 'デコイ', en: 'Decoy' }, holder: 'ally' },
   /** 美しさ（シンデレラの S2） */
