@@ -1,0 +1,34 @@
+{
+  "id": "1423",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1423_molly.mp4",
+  "original": "2026-11-28_18-00-35.mp4",
+  "durationSec": 43.1,
+  "frames": 2583,
+  "fps": 60,
+  "sizeMB": 52.1,
+  "sha256": "4234e17bf3fc",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 590,
+      "name": "モリー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-28T18:07+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
