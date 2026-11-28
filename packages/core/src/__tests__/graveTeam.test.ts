@@ -5,7 +5,7 @@ import { computeFixedSpecDefence } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const slot = (id: number): TeamSlotInput => ({
   ...fixedSlot(id),
@@ -92,5 +92,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     for (const w of windows('overheatI').filter((x) => x.end < plan.frames)) expect(ends.has(w.end)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

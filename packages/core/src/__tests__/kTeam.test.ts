@@ -7,7 +7,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { fixedTeam } from './teamHelpers.ts';
 
 const K = 41;
 
@@ -104,5 +104,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const [f, n] of perFrame) if (!changed.has(f)) expect(n).toBe(1);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -1,10 +1,8 @@
 // デルタ（20）を含む編成: 定義はダメージに効く効果を持たない（S1 とバーストは noEffect。S2 の防御力▲ は自分に付く効果で、与ダメージの式は
-// 読まない。C-0589）。射撃の列のグループ分け（V-0027、C-0081）。
+// 読まない。C-0589）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
@@ -44,7 +42,6 @@ describe('デルタの定義', () => {
 });
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, delta }) => {
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('gives no damage buff windows or instants from Delta, only the DEF up on herself (C-0081・C-0589)', () => {
@@ -52,13 +49,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, delta }) => 
     expect(windows.length).toBeGreaterThan(0);
     expect(windows.every((w) => w.effect.stat === 'defense' && w.slotIndex === delta)).toBe(true);
     expect(plan.instants.filter((e) => e.sourceSlotIndex === delta)).toEqual([]);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

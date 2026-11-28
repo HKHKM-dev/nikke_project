@@ -1,16 +1,14 @@
 // 雪子（871）の S1 のペルソナ - コノハナサクヤの味方全体の回復（メディア）は、戦闘開始から 3 秒ごと（0 秒には起きない）に
 // 1 回ずつ起きる（C-0647）。S2 の真紅の華の回復（メディラマ）は同じフレームに重なるので、別に定義しない（C-0648）。
-// 回復を受けた時の効果を持つ味方（アスカの S1・クラウンの S2）の発動と、射撃の列のグループ分け
+// 回復を受けた時の効果を持つ味方（アスカの S1・クラウンの S2）の発動
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { timerFrames } from '../skills/timeline.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy({ element: 'Wind' });
 
@@ -63,23 +61,10 @@ describe('ペルソナ - コノハナサクヤのメディア（C-0647）', () =
 });
 
 const TEAMS: Record<string, TeamInput> = {
-  '録画 0538 の編成（ラム + デルタ + 雪子）': team([fixedSlot(RAM), fixedSlot(DELTA), fixedSlot(YUKIKO)], 2),
-  '雪子 + アスカ・バーストなし': team([fixedSlot(YUKIKO), fixedSlot(ASUKA)], 1, false),
   '実戦寄り（ラム + デルタ + 雪子 + クラウン + アスカ）': team(
     [fixedSlot(RAM), fixedSlot(DELTA), fixedSlot(YUKIKO), fixedSlot(CROWN), fixedSlot(ASUKA)],
     4,
   ),
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
-});
+describeRuns(TEAMS);

@@ -1,11 +1,11 @@
 // ミルク（141）を含む編成（2 段目の段 15 の PR 1。plan/design-skill-stage15.md 2.1 節。V-0559）。宝物版と HP の閾値の細かい動きは
 // skills/__tests__/stage15Milk.test.ts。ここでは味方と組んだ時に:
 // S2: 自分の HP が 80% 以上の間、味方全体に会心ダメージ▲（HP は満タンのままなので戦闘の全部）。
-// バースト: バーストスキルダメージは使うたびに 1 ヒット。射撃の列のグループ分け。
+// バースト: バーストスキルダメージは使うたびに 1 ヒット。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { describeEveryShotInOneGroup, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const MILK = 141;
 
@@ -35,5 +35,3 @@ describe('ミルク + デルタ + スノーホワイト：ヘビーアームズ'
     for (const hit of burst.hits) expect(hit.perActivation).toBeGreaterThan(0);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

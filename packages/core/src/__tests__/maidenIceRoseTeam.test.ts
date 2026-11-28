@@ -9,7 +9,7 @@ import { effectFrameOf, hexagonFrameOf, hitFramesOf, hitShareOf } from '../burst
 import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MAIDEN = 183;
 const SOLDIER_EG = 300;
@@ -108,5 +108,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maiden: M, b
     expect([...new Set(own.map((w) => w.start))].length).toBe(uses.length);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

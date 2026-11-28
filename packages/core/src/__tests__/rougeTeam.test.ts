@@ -1,11 +1,11 @@
 // ルージュ（272）を含む編成（plan/design-rouge.md）。語彙は skills/__tests__/rouge.test.ts。ここでは味方と組んだ時に:
 // S2: 後列（2・4 枠目）なら戦闘開始から自分と両隣にソードコインの攻撃ダメージ▲が付き、前列なら付かない。S1: フルチャージ 8 回ごとに
-// 味方全体の CT を縮める。バースト: 味方全体に発動者基準の攻撃力▲。射撃の列のグループ分け。
+// 味方全体の CT を縮める。バースト: 味方全体に発動者基準の攻撃力▲。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const ROUGE = 272;
 
@@ -69,5 +69,3 @@ describe('ルージュが前列の 3 枠目', () => {
     for (const w of windows) expect(w.end - w.start).toBe(gameSecondsToFrames(10));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

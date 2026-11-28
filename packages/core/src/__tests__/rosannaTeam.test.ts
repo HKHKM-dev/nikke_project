@@ -10,7 +10,7 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import type { Element } from '../types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ROSANNA = 280;
 const ELEGG = 500;
@@ -107,5 +107,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(taken.at(-1)!.end - taken.at(-1)!.start).toBeLessThanOrEqual(SEC30);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

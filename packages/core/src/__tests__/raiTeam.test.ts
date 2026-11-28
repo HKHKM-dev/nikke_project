@@ -5,14 +5,7 @@ import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const RAI = 392;
 const CROWN = 330;
@@ -74,5 +67,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(first(sim)).toBeLessThan(first(runSimulation(without)));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

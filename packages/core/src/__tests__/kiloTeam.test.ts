@@ -9,7 +9,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { staticStatesOf } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const KILO = 361;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -46,5 +46,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, kilo: K }) =
     expect(result.damage).toBeGreaterThan(0);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

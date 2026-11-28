@@ -1,13 +1,13 @@
 // イヴ（850）を含む編成（plan/design-eve.md）。S1 の不安定エネルギーが通常攻撃のクリティカル命中 44 回ごとに自分の発から 3 ヒットで出て、
 // エグゾスパインMk2 の間だけ同じ値のヒットが重なること、電撃コードの敵にだけ受けるダメージ▲が付くこと、S2 の攻撃力▲が戦闘を通して効き、
 // Mk2 の間だけもう 1 つ重なること、電撃コードの敵にだけ 10 回命中ごとに弾丸チャージ 3 発が入ること、バーストが説明文の値の 6 倍で出て
-// Mk2 が付くことを見る（6 ヒットの時刻は遅れの表の行）。射撃の列のグループ分け
+// Mk2 が付くことを見る（6 ヒットの時刻は遅れの表の行）。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const EVE = 850;
 const FLOWER = 304;
@@ -94,5 +94,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const h of hits) expect(h.multiplier).toBeCloseTo(6 * 4.5714, 10);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

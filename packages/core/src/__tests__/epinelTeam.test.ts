@@ -10,7 +10,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EPINEL = 241;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -84,5 +84,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot }) => {
     expect(plan.skillHits.filter((h) => h.slotIndex === slot)).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

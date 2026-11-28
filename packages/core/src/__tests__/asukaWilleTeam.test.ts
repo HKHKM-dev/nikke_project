@@ -1,14 +1,14 @@
 // アスカ：WILLE（835）を含む編成（plan/design-asuka-wille.md。V-0781）。語彙は skills/__tests__/asukaWille.test.ts。ここでは味方と組んだ時に:
 // バーストの殲滅態勢は 00.00 の 1f 前から 9 秒、その間だけ 10 発ごとのダメージとアンチA.T.フィールド（敵に付く受けるダメージ▲）が出て、
 // 殲滅態勢が終わると残弾が 0 になり、5f 後に殲滅（スタックの数だけの追加ダメージ）が出てアンチA.T.フィールドが外れる。込め直しの後の
-// 立ち上げ速度▼の 3 秒は 1 秒に 1 発で、その間の発は立ち上がりに数えない。射撃の列のグループ分け。
+// 立ち上げ速度▼の 3 秒は 1 秒に 1 発で、その間の発は立ち上がりに数えない。
 import { describe, expect, it } from 'vitest';
 import { hexagonFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { ENEMY } from '../skills/holders/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const ASUKA = 835;
 
@@ -94,5 +94,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     },
   );
 });
-
-describeEveryShotInOneGroup(TEAMS);

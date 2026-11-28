@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot, stageEnterFrames } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const REI = 831;
 
@@ -72,5 +72,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

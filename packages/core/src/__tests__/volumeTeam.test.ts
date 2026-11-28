@@ -5,13 +5,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  fullBurstCooldownCuts,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, fullBurstCooldownCuts, windowsFrom } from './teamHelpers.ts';
 
 const VOLUME = 431;
 const WINDOW = gameSecondsToFrames(5);
@@ -68,5 +62,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     );
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

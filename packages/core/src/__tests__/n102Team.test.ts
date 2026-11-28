@@ -10,7 +10,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const N102 = 120;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -55,7 +55,6 @@ const CASES: Record<string, { input: TeamInput; n102: number; solo: boolean }> =
     solo: false,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, n102, solo }) => {
   const sim = runSimulation(input);
@@ -124,5 +123,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, n102, solo }
     expect(magazines).toEqual([6, 9, 9, 9, 9, 9, 9, 9, 9]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

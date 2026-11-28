@@ -7,7 +7,7 @@ import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy();
 
@@ -54,8 +54,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, privaty }) =
     for (const f of lastShots) expect(windows.some((w) => w.start <= f && f < w.end)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, { input }]) => [name, input])));
 
 // S2 の 2 つめは、撮影の編成（鈴原サクラ + デルタ + プリバティ：アンカインド・メイド。V-0875）で見る
 describe('S2 のフルバースト中のペレット 30 回ごとの弾丸チャージと攻撃力▲', () => {

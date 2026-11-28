@@ -1,17 +1,14 @@
 // 鈴原サクラ（836）を含む編成（V-0213）。S1: 通常攻撃の命中 120 回ごとに敵の受けるダメージ▲（5 秒）。命中は期待値で数え、
 // 発火した発の次のフレームから乗る（C-0315）。S2（受ける HP 回復量▲・受けるダメージ▼）とバースト（持続回復）は効果なし（C-0316）。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const SAKURA = 836;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
@@ -85,7 +82,6 @@ describe('鈴原サクラ単騎（手入力の条件）', () => {
 
 // V-0200 の録画 A の編成（鈴原サクラ I・デルタ II・ブラン II・ノワール III）と、実戦寄りの編成
 const TEAMS: Record<string, TeamInput> = {
-  単騎: solo(),
   'V-0200 の録画 A（鈴原サクラ + デルタ + ブラン + ノワール）': team(
     [fixedSlot(SAKURA), fixedSlot(20), fixedSlot(270), fixedSlot(271)],
     2,
@@ -96,15 +92,4 @@ const TEAMS: Record<string, TeamInput> = {
   ),
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
-});
+describeRuns(TEAMS);

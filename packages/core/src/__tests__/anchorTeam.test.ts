@@ -8,7 +8,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedTeam } from './teamHelpers.ts';
 
 const ANCHOR = 351;
 
@@ -58,5 +58,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(sim.shots[anchor]!.lastShotFrames?.length).toBeGreaterThan(2);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -1,4 +1,4 @@
-// Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃・射撃の列のグループ分け（plan/design-stage11-modernia.md 7.2〜7.5 節）。
+// Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃（plan/design-stage11-modernia.md 7.2〜7.5 節）。
 // 録画 0044（I-DOLL・フラワー + デルタ + モダニア（操作））の予測と実測値の回帰、実戦寄りの編成（リター + クラウン + モダニア + アリス + アドミ）。
 // 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
 import { describe, expect, it } from 'vitest';
@@ -6,7 +6,6 @@ import type { EnemyInput } from '../damage.ts';
 import { firingParams } from '../frame/firing.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
@@ -24,10 +23,6 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 
 const REC44 = team([fixedSlot(304), fixedSlot(20), fixedSlot(260)], 2);
 const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(260), fixedSlot(191), fixedSlot(172)], 2);
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0044（I-DOLL・フラワー + デルタ + モダニア）': REC44,
-  '実戦寄り（リター + クラウン + モダニア + アリス + アドミ）': PRACTICAL,
-};
 
 function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
   return result.slots[slotIndex]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
@@ -236,18 +231,5 @@ describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3�
     const reloading = { ...state, phase: 'reloading' as const, ammo: 0, wait: 50 };
     resumeShooter(reloading, mg, DEFAULT_WEAPON_MODEL, params);
     expect(reloading).toMatchObject({ phase: 'ready', ammo: 300, shotsInMagazine: 0, acc: 0, wait: 24 });
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成 (7.4): %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

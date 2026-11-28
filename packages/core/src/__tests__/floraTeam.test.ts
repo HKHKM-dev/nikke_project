@@ -7,7 +7,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { describeRuns, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const FLORA = 411;
 const EXIA = 210;
@@ -125,7 +125,7 @@ describe('撮影の編成・宝物版（バーストを使わない）', () => {
   });
 });
 
-describeEveryShotInOneGroup({
+describeRuns({
   '撮影の編成・宝物版': rangeTeam(3),
   '撮影の編成・基礎版': rangeTeam(0),
   '実戦寄り（リター + フローラ + 紅蓮 + アリス + クラウン）': fixedTeam([82, FLORA, 222, 191, 330], 2),

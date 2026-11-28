@@ -10,7 +10,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedTeam } from './teamHelpers.ts';
 
 const NOVEL = 212;
 // S1 の周期は ceil(10 ÷ 0.017) = 589 ティック（発動のたびに数え直す。C-0502）
@@ -86,5 +86,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(taken.map((w) => w.start)).toEqual(full.map((a) => hitFramesOf(a)[0]!));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

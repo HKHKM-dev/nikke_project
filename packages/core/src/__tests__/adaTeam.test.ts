@@ -2,18 +2,10 @@
 // skills/__tests__/stage15Ada.test.ts。ここでは味方と組んだ時に:
 // S1: フルバーストの始まりに、直前にバーストを使った III（エイダ自身とは限らない）に攻撃力▲・防御力無視ダメージ▲（10 秒。C-0784）。
 // S2: 閃光手榴弾投擲はフルバーストの中だけ（周期 2 秒。自分のバーストの後の 10 秒は 1 秒。C-0787・C-0788）。ヒットは周期の遅れの後。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { GAME_SECONDS_PER_FRAME } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  rawDefinition,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, rawDefinition, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const ADA = 840;
 const SWHA = 471;
@@ -98,5 +90,3 @@ describe('リター + デルタ + エイダ + スノーホワイト：ヘビー�
     expectSteps(plan, s2.trigger.everySeconds);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

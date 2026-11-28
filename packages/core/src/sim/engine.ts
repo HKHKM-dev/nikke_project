@@ -1,5 +1,5 @@
-// 計算の入口 runSimulation（ヘッドレス・純関数）。画面・CLI・records 層は simTeamResult(input, runSimulation(input)) を使う
-// （plan/design-unify-sim-calc.md 5.2 節）。
+// 計算の入口 runSimulation（ヘッドレス・純関数）。画面・CLI・records 層はこれを使い、画面と CLI は画面の形に simTeamResult(input,
+// runSimulation(input)) でする（plan/design-unify-sim-calc.md 5.2 節）。
 // 1 パス目（frame/plan.ts の planTeamRun）の結果を、2 パス目（ここ）で集計する:
 //   - 通常攻撃: 区間ごとに 1 トリガーの値（computeTriggerDamage の期待値。乱数なし）を先に出し、射撃の列から二分探索で引いた区間の
 //     発数（countShotsInRanges）を掛ける。条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（plan/design-stage18.md 12.3 節）。
@@ -71,7 +71,13 @@ import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { InstantApplication } from '../frame/firstPass.ts';
-import { countShotsInRanges, lowerBound, partialShotsInRanges, type ShotLog } from '../frame/shots.ts';
+import {
+  assertEveryShotCounted,
+  countShotsInRanges,
+  lowerBound,
+  partialShotsInRanges,
+  type ShotLog,
+} from '../frame/shots.ts';
 
 export type SimInput = TeamInput & {
   /** true なら全イベントを events に残す（テスト・デバッグ用。既定 false） */
@@ -421,6 +427,12 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
       ...(landed === undefined ? {} : { landedShots: landed }),
     };
   });
+  assertEveryShotCounted(
+    'runSimulation',
+    index,
+    segments.reduce((sum, s) => sum + s.triggers, 0),
+    shotFrames.length,
+  );
   const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateNSpansOf(timeline, index));
   return {
     index,

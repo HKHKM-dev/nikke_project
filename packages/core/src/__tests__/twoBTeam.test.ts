@@ -1,13 +1,13 @@
 // 2B 編（plan/design-2b.md）: 2B（810）を含む編成で、S1 の開始回数別の最大HP▲ がバーストの 1・2・3 回目の使用から段ごとに足され、
 // S2 の戦闘開始時の攻撃力▲がその最終最大HP を追って上がること、300 回射撃ごとの倍率ダメージが 300 の倍数の発の 45f 後に出ること、
-// バーストの分配ダメージが 1 ヒットで、追加ダメージが S1 の効果の発火の 36f 後に出ることを見る（時刻は遅れの表の行）。射撃の列のグループ分け
+// バーストの分配ダメージが 1 ヒットで、追加ダメージが S1 の効果の発火の 36f 後に出ることを見る（時刻は遅れの表の行）。
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const TWO_B = 810;
 const TIERS = [10.03, 20.06, 57.76];
@@ -79,5 +79,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(additional).toEqual(uses.map((f) => f + 36).filter((f) => f < plan.frames));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

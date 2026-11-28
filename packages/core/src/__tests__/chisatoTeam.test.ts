@@ -2,12 +2,10 @@
 // S1: 超感覚（カウンタ）は戦闘開始時に 100、2 秒ごとに 1 減り、バースト使用時に 100 に戻る。攻撃力▲（70 以上）・防御力無視ダメージ▲
 // （55 以上）・命中率▲（25 以上）は、閾値ごとに別々に付く（C-0797・C-0800）。
 // S2: バースト使用から 10 秒の通常攻撃の変更（C-0799）と、通常攻撃 48 回命中ごとの防御力無視ダメージ（C-0814・C-0815）。
-// バースト: 超感覚 100 チャージと攻撃力▲（10 秒。C-0799）。射撃の列のグループ分け。
+// バースト: 超感覚 100 チャージと攻撃力▲（10 秒。C-0799）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { slotPieces } from './historyHelpers.ts';
@@ -87,23 +85,5 @@ describe('リター + デルタ + 千束', () => {
     expect(attack).toEqual(conversion);
     // 最後の窓は戦闘の終わり（10,589）で切れることがある
     for (const w of conversion) expect(w.end === 10_589 || w.end - w.start === 588).toBe(true);
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  単騎: team([fixedSlot(CHISATO)], 0, false),
-  'リター + デルタ + 千束': team([fixedSlot(82), fixedSlot(20), fixedSlot(CHISATO)], 2, true),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

@@ -1,10 +1,8 @@
 // ユニ（160）を含む編成: S2 の吸収回復（維持時間のある heal）は、付き直しでは healed を起こさない
-// （plan/design-heal-window.md 1.1 節。V-0024・C-0082）。録画 0078 の編成と、実戦寄りの編成で 射撃の列のグループ分けを見る。
+// （plan/design-heal-window.md 1.1 節。V-0024・C-0082）。録画 0078 の編成と、実戦寄りの編成で見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -21,10 +19,6 @@ const REC078 = team([fixedSlot(160), fixedSlot(830)], 1);
 // アスカのバーストの吸収回復が、ユニの吸収回復の付いている間に付く（出どころが違うので別の窓。論点 1 の仮置き）。
 // アリスの S1（topAttack）が順位を見るので、1 パス目のループの回復も通る
 const PRACTICAL = team([fixedSlot(82), fixedSlot(160), fixedSlot(830), fixedSlot(191), fixedSlot(330)], 2);
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0078 の編成（ユニ + アスカ）': REC078,
-  '実戦寄り（リター + ユニ + アスカ + アリス + クラウン）': PRACTICAL,
-};
 
 const YUNI = 0;
 const S1 = gameSecondsToFrames(25);
@@ -76,18 +70,5 @@ describe('実戦寄りの編成', () => {
     for (const i of items) expect(healed).toContain(i.start);
     for (const f of healed) expect(items.some((i) => i.start <= f && f < i.end)).toBe(true);
     expect(items.every((i) => i.holder === ASUKA && i.stage === 1)).toBe(true);
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

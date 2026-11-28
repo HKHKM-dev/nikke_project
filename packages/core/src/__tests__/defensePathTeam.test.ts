@@ -1,9 +1,8 @@
 // 2 段目の段 7（plan/design-skill-stage7.md）: 防御力の経路。枠の防御力（バフ前。defenceOverride とスペック固定）、防御力▲（stat defense）、
 // 対象の絞り込み「自分と自分より最終防御力が低い味方」（targetDefense: lowerThanSelf。アニス：スター（17）の S2 の発射体爆発ダメージ▲。
-// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠、射撃の列のグループ分け。論点 4 の続き: 味方の
+// C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠。論点 4 の続き: 味方の
 // 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 0486 でデルタが外れ、録画 0488 で入る）
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, targetProfileForEnemy } from '../enemies.ts';
@@ -381,23 +380,5 @@ describe('指標 fullBurstBuffApplied（録画 0486・0488 の画面との比べ
       } as Parameters<(typeof METRICS)[string]['sim']>[1]);
     expect(delta(TIE, 3)).toEqual([1]);
     expect(delta(CONTROL, 2)).toEqual([1]);
-  });
-});
-
-describe.each([
-  ['録画 A の編成（同値）', TIE],
-  ['録画 B の編成（対照）', CONTROL],
-  ['録画 0163 の編成', REC163],
-  ['録画 B の編成（画面の既定の条件。防御力▲ が切れた回あり）', WAITING],
-])('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

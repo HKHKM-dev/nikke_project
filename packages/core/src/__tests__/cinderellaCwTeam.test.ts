@@ -8,14 +8,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const CINDERELLA_CW = 515;
 const LUDMILLA = 190;
@@ -109,5 +102,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const a of slot.burst.activations) expect(a.hit.attackDamageMultiplier).toBeGreaterThanOrEqual(1 + up);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

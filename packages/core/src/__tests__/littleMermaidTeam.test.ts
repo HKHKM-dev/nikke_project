@@ -8,14 +8,7 @@ import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const LITTLE_MERMAID = 513;
 const DELTA = 20;
@@ -122,5 +115,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     infinite.forEach((n, i) => (i === laplace ? expect(n).toBeGreaterThan(0) : expect(n).toBe(0)));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -6,7 +6,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt, itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedTeam, fullBurstCooldownCuts, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { fixedTeam, fullBurstCooldownCuts, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const HELM_AM = 353;
 const enemy = (element: Element | null) => ({ ...SHOOTING_RANGE_ENEMY, element });
@@ -80,5 +80,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     );
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

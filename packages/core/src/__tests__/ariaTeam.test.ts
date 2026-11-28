@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, rawDefinition, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, rawDefinition, windowsFrom } from './teamHelpers.ts';
 
 const ARIA = 432;
 
@@ -62,5 +62,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       if (holder !== aria) expect(hitRate(holder)).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

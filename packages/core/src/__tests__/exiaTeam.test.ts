@@ -10,7 +10,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EXIA = 210;
 const DELTA = 20;
@@ -120,5 +120,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

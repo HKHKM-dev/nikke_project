@@ -11,14 +11,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { stateItemsOf } from './historyHelpers.ts';
-import {
-  describeEveryShotInOneGroup,
-  ENEMY_PRESETS,
-  fixedTeam,
-  RANGE_BIGARMS,
-  rawDefinition,
-  SHOOTING_RANGE_ENEMY,
-} from './teamHelpers.ts';
+import { ENEMY_PRESETS, fixedTeam, RANGE_BIGARMS, rawDefinition, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 type RawEffect = Record<string, unknown>;
 type Raw = { skills: Record<'skill1' | 'skill2' | 'burst', { effects: RawEffect[] }> };
@@ -189,5 +182,3 @@ describe('騒音公害の命中率▼（的の▼の表）', () => {
     }
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, t]) => [name, t.input])));

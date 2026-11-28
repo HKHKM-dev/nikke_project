@@ -8,13 +8,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const LAPLACE = 100;
 
@@ -117,5 +111,3 @@ describe.each(Object.entries(CASES))('編成: %s', (name, { input, treasure }) =
     expect(hitsOf('skill2').some((h) => changedSet.has(h.frame))).toBe(false);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

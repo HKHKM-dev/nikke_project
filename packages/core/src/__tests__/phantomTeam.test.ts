@@ -8,7 +8,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const PHANTOM = 580;
 const LITER = 82;
@@ -129,5 +129,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(atk[0]!.start).toBe(shots[9]! + 1);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

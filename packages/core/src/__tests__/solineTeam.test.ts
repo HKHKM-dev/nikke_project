@@ -13,15 +13,7 @@ import { resolveCondition } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { selfHpHolds } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, windowsFrom } from './teamHelpers.ts';
 
 const SOLINE = 71;
 const IDOLL_FLOWER = 304;
@@ -137,5 +129,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

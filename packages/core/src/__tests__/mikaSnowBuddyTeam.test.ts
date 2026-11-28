@@ -8,7 +8,6 @@ import type { TeamInput } from '../team.ts';
 import { stateItemsOf } from './historyHelpers.ts';
 import {
   characterOf,
-  describeEveryShotInOneGroup,
   effectWindows,
   fixedSlot,
   fixedTeam,
@@ -149,5 +148,3 @@ describe('ミカ：スノーバディの S2 のスタック量▲', () => {
     expect(firstFullOf(withStack, 0)).toBeLessThan(firstFullOf(withoutStack, 0));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

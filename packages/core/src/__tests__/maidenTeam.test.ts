@@ -8,7 +8,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { characterOf, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const MAIDEN = 181;
 
@@ -79,5 +79,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

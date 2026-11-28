@@ -7,7 +7,7 @@ import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const CLAY = 551;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -94,5 +94,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(conversion.map((w) => w.start)).toEqual(uses);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

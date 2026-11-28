@@ -10,7 +10,6 @@ import type { BuildEffect } from '../buildEffects.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf, statePiecesOf } from './historyHelpers.ts';
 import {
-  describeEveryShotInOneGroup,
   fixedSlot,
   fixedTeam,
   rawDefinition,
@@ -98,8 +97,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
 
 // timed の perCount は condition が無くても読み込みを通る。スタック数 0 の発火は出さないので、条件 selfState（ほろ酔い）を外しても同じ件になる
 describe('condition の無い timed の perCount', () => {

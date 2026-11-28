@@ -7,14 +7,7 @@ import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { scaleBasisPoints } from '../skills/buffs.ts';
 import type { TeamInput } from '../team.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { characterOf, effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const RUMANI = 240;
 const JILL = 841;
@@ -93,5 +86,3 @@ describe('実戦寄りの編成（ルマニ + クラウン + ジル + ラピ：�
     for (const slot of [0, 1, 2, 3]) expect(effectWindows(sim, slot, UP)).toEqual(windows);
   });
 });
-
-describeEveryShotInOneGroup({ '撮影 A': SHOOT_A, '撮影 B': SHOOT_B, 実戦寄り: PRACTICAL });

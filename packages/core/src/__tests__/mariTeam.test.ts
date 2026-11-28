@@ -11,7 +11,7 @@ import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition, type RawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MARI = 832;
 const COCOA = 311;
@@ -63,7 +63,6 @@ const CASES: Record<string, { input: TeamInput; mari: number; noPierce: number[]
     noPierce: [0],
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mari, noPierce }) => {
   const sim = runSimulation(input);
@@ -121,5 +120,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mari, noPier
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

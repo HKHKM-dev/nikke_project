@@ -7,13 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const MAXWELL = 105;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ element: 'Electronic' });
@@ -30,7 +24,6 @@ const CASES: Record<string, { input: TeamInput; maxwell: number }> = {
     maxwell: 1,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 /** 段階ごとのチャージ時間（Lv10。1 段階以下・2・3・4・5 段階以上の description_value） */
 const CHARGE_SECONDS = [9, 1, 2, 3, 4].map((ref) => skillValueOf(MAXWELL, 'burst', ref));
@@ -92,5 +85,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maxwell }) =
     expect(gauge.length).toBe(shots.filter((f) => !partial.has(f)).length);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

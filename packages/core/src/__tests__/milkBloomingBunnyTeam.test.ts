@@ -5,14 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { GAME_SECONDS_PER_FRAME } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  rawDefinition,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, rawDefinition, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const MILK_BB = 143;
 
@@ -81,5 +74,3 @@ describe.each(Object.entries(TEAMS))('%s', (name, input) => {
     expect(plan.instants.filter((x) => x.slotIndex === m && x.effect.kind === 'ammoDecrease')).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

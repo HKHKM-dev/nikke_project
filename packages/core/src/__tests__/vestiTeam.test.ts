@@ -9,13 +9,7 @@ import { staticStatesOf } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const VESTI = 91;
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
@@ -88,5 +82,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const h of additional) expect(h.hit.boost.fullBurst).toBe(0);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

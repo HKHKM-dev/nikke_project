@@ -10,7 +10,7 @@ import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
 import { lostHpSteps } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { slotPieces } from './historyHelpers.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 /** 防御力もスペック固定にし、コア命中率を 0.1 にした枠 */
 const slot = (id: number): TeamSlotInput => ({
@@ -113,5 +113,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     },
   );
 });
-
-describeEveryShotInOneGroup(TEAMS);

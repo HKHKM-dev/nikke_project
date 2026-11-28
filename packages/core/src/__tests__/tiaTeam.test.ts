@@ -2,11 +2,10 @@
 // 細かい動きは skills/__tests__/stage15Tia.test.ts。ここでは味方と組んだ時に:
 // S1: バースト使用時の遮蔽物 HP 回復（S2）で、味方全体に攻撃ダメージ▲（10 秒。C-0776）。
 // バースト: 再突入で、ティアの後のバースト段階は I に戻る（キャラのデータの nextStep が Step1。定義の burstReentry も同じ段）。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const TIA = 451;
 
@@ -48,5 +47,3 @@ describe.each([
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

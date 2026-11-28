@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MINT = 600;
 const PRIKA = 601;
@@ -106,5 +106,3 @@ describe('プリカとミント（撮影 D）: アンコール', () => {
     expect(spans(pierce)).toEqual([{ start: iiActivations[0]!.frame, end: plan.frames }]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

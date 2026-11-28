@@ -10,7 +10,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const REM = 820;
 const FLOWER = 304;
@@ -50,7 +50,6 @@ const CASES: Record<string, { input: TeamInput; rem: number; rl: number[]; flowe
     rl: [0, 2, 3, 4],
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, rem, rl, flower }) => {
   const sim = runSimulation(input);
@@ -95,5 +94,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, rem, rl, flo
     expect(top).toBeLessThanOrEqual(30);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

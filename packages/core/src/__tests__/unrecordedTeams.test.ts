@@ -1,14 +1,11 @@
-// 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md）で定義したキャラを含む編成。撮った編成（3 節の撮り方 A〜E・G）で、
-// 射撃の列がどのグループにも 1 回ずつ入る。定義の形（遅れの表の行・同じ発動の▲の印）も見る。
+// 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md）で定義したキャラを含む編成。撮った編成（3 節の撮り方 A〜E・G）が
+// 計算を通ることと、定義の形（遅れの表の行・同じ発動の▲の印）を見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
-import { planTeamRun } from '../frame/plan.ts';
 import { burstDelaysOf, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import type { TeamInput } from '../team.ts';
 import { characterOf } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy();
 const team = (ids: number[], controlledSlot: number): TeamInput =>
@@ -43,15 +40,4 @@ const TEAMS: Record<string, TeamInput> = {
   'G: ナガ + アスカ': team([450, 830], 1),
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
-});
+describeRuns(TEAMS);

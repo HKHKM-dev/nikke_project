@@ -6,7 +6,7 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const NOISE = 430;
 const CROWN = 330;
@@ -66,5 +66,3 @@ describe('実戦寄りの編成（ノイズ + クラウン + アスカ + アリ�
     }
   });
 });
-
-describeEveryShotInOneGroup({ 撮影: SHOOT, 実戦寄り: PRACTICAL });

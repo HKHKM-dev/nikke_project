@@ -3,13 +3,13 @@
 // 思い出作りの間の射撃の 2・8・14…発目に弾丸チャージ、4・10・16…発目に幸せな思い出（と青春の記録）、6・12・18…発目に大切な思い出が付き、
 // フルバースト終了で思い出作りと一緒に外れる。
 // フルバースト終了で SG の味方（自分も）に、発動者基準の攻撃力 × 大切な思い出のスタック数が付き、バーストの使用で自分を除く SG の
-// 味方に攻撃ダメージ▲が付く。射撃の列のグループ分け。
+// 味方に攻撃ダメージ▲が付く。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { applicationsOf, slotPieces } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const FORTUNE_MATE = 583;
 
@@ -116,5 +116,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

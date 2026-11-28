@@ -8,7 +8,7 @@ import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const RUPEE = 200;
 const COCOA = 311;
@@ -104,5 +104,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

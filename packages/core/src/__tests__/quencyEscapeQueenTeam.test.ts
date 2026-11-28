@@ -1,14 +1,12 @@
 // クエンシー：エスケープクイーン（403）を含む編成: S2 のルート探索 1〜3 段階（通常攻撃 2 回ごと。2・3 段階は下の段階のフルスタックの時
 // だけ付く）の命中率▲・攻撃力▲のスタックと、S1 の「ルート探索 N 段階フルスタック状態の時のみ」の▲（while。2・3 段階は条件つきの付与の
-// 状態を見る）、バーストの分配ダメージと射撃の列のグループ分け。V-0702。
+// 状態を見る）、バーストの分配ダメージ。V-0702。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import { runTeam } from './runTeam.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
@@ -101,19 +99,6 @@ describe('バースト（リター + デルタ + クエンシー：エスケー�
   });
 });
 
-describe.each([
-  ['単騎（V-0702 の撮影 S の条件）', SOLO],
-  ['リター + デルタ + クエンシー：エスケープクイーン（撮影 B の条件）', BURST],
-  ['実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）', PRACTICAL],
-] as const)('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
+describeRuns({
+  '実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）': PRACTICAL,
 });

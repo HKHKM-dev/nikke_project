@@ -10,15 +10,7 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, windowsFrom } from './teamHelpers.ts';
 
 const BRID = 70;
 const COCOA = 311;
@@ -110,5 +102,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

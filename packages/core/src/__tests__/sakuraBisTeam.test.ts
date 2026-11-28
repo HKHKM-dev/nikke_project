@@ -9,7 +9,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SAKURA_BIS = 284;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -83,5 +83,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(CASES);

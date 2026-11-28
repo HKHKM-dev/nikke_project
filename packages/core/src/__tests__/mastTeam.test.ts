@@ -3,7 +3,6 @@
 import { describe, expect, it } from 'vitest';
 import { defenceAfterDown, type EnemyInput } from '../damage.ts';
 import { computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
@@ -112,13 +111,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, mast }) => {
       const holders = others.filter((t) => t.items.some((it) => it.start === w.start && it.end === w.end));
       expect(holders.length).toBe(Math.min(2, allies));
     }
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = result.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

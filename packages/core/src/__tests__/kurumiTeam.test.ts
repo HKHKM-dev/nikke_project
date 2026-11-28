@@ -1,12 +1,10 @@
 // クルミ（862）を含む編成: S1 のハッキング（持続ダメージ dot。付いた 1 秒後から 1 秒ごと・付き直しで延びる）。
-// 射撃の列のグループ分けと、ハッキングの tick（plan/design-kurumi.md）と、tick のゲージ（V-0113。plan/design-raven-s1.md 10 節）。
+// ハッキングの tick（plan/design-kurumi.md）と、tick のゲージ（V-0113。plan/design-raven-s1.md 10 節）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -49,7 +47,6 @@ describe('クルミの定義', () => {
 });
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, kurumi }) => {
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const ticks = plan.skillHits.filter((h) => h.slotIndex === kurumi && h.effect.dot !== undefined);
 
@@ -113,14 +110,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, kurumi }) =>
     // ループの中で予約した tick は、ループの後に出したハッキングの tick と同じ列（バーストで付いた分も含む。10 節）
     expect(own.map((g) => g.frame)).toEqual(ticks.map((h) => h.frame));
     expect(new Set(own.map((g) => g.energy)).size).toBe(1);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });
 

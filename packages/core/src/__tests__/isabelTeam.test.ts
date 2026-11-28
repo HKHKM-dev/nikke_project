@@ -1,13 +1,11 @@
 // イサベル（231）を含む編成: バーストの段階 1 の受けるダメージ▲（2 回目の発動から 5 秒。V-0075）。
-// 射撃の列のグループ分けと、▲の窓・掛かる先（C-0160〜C-0163）、着弾の遅れ（C-0165。plan/design-burst-landing.md）。
+// ▲の窓・掛かる先（C-0160〜C-0163）、着弾の遅れ（C-0165。plan/design-burst-landing.md）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
 import { activationFramesOfSlot, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput } from '../team.ts';
@@ -51,7 +49,6 @@ describe('イサベルの定義', () => {
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, isabel }) => {
   const sim = runSimulation(input);
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const uses = activationFramesOfSlot(plan.schedule!, isabel);
   const mine = plan.schedule!.activations.filter((a) => a.slotIndex === isabel);
@@ -105,13 +102,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, isabel }) =>
     const at = (f: number) => plan.timeline.segments.find((g) => g.start <= f && f < g.end)!.slots[isabel]!.buffs;
     // S1 の段階 3 の攻撃力は 3 回目の効果の発火から付くが、同じ発動の段階 2 の追加ダメージは発火の直前のバフで計算する
     expect(at(third.frame).attackRatio - at(third.frame - 1).attackRatio).toBeCloseTo(0.1728, 10);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

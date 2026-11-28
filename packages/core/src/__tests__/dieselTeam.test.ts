@@ -7,13 +7,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  SHOOTING_RANGE_ENEMY,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY, windowsFrom } from './teamHelpers.ts';
 
 const DIESEL = 72;
 const FLOWER = 304;
@@ -103,9 +97,4 @@ describe('撮影の編成（I-DOLL・フラワー（I・操作）・ディーゼ
       );
     }
   });
-});
-
-describeEveryShotInOneGroup({
-  基礎版の単騎: team([DIESEL], 0, 0, 0, false),
-  '撮影の編成（宝物の段階 3）': team([FLOWER, DIESEL], 0, 1, 3),
 });

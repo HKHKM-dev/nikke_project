@@ -5,14 +5,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { stateItemsOf } from './historyHelpers.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { characterOf, effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const ALICE_WB = 195;
 const CROWN = 330;
@@ -153,5 +146,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(windows[0]!.start).toBe(Math.min(...heals('skill1', crown), ...heals('burst', crown)));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

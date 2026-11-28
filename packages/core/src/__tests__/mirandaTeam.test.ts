@@ -1,12 +1,10 @@
 // ミランダ（32）を含む編成: S1 の 2 つの命中率▲（味方全体 5.44%・SMG の味方 3.79%）が SMG の自分には和で区間の N に入り、
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0186。持続の▲の入れ方は C-0170）、宝物版 S1 の攻撃力▲（C-0187）、
-// 射撃の列のグループ分け。V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
+// V-0114。宝物版のバーストの対象（自分を除く上位 2 機、足りなければ自分。C-0322）と、宝物版 S2 の
 // フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 0244・0245 と同じ編成で見る（V-0216〜V-0218）。
 // 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 0262 と
 // 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { coreHitRateWithHitRateUp, exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -14,7 +12,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedEnemy, fixedSlot, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
@@ -183,21 +181,6 @@ describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は�
   });
 });
 
-describe.each([
-  ['ミランダ単騎（V-0114 の撮影の条件）', SOLO],
-  ['ミランダ + デルタ（V-0216 の撮影の条件）', DUO],
-  ['ミランダ + デルタ + I-DOLL・サン（V-0217・V-0218 の撮影の条件）', TRIO],
-  ['ミランダ（操作）+ デルタ + I-DOLL・サン（V-0229 の撮影の条件）', TRIO_LINE3],
-  ['実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）', PRACTICAL],
-] as const)('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
+describeRuns({
+  '実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）': PRACTICAL,
 });

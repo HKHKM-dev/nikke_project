@@ -8,7 +8,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const NEVE = 193;
 const COCOA = 311;
@@ -49,7 +49,6 @@ const CASES: Record<string, { input: TeamInput; neve: number }> = {
     neve: 2,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neve }) => {
   const plan = planTeamRun(input);
@@ -98,5 +97,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neve }) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

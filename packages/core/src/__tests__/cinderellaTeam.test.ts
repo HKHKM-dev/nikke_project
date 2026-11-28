@@ -1,7 +1,6 @@
 // シンデレラ（511）を含む編成。S1 のフルチャージ攻撃の命中時の追加ダメージ（射撃ごとの倍率ダメージ。C-0583。V-0445）と、
-// 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）の美しさ（最大HP▲）と S1 の最終最大HP 基準の攻撃力▲の読み直し。射撃の列のグループ分け
+// 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）の美しさ（最大HP▲）と S1 の最終最大HP 基準の攻撃力▲の読み直し。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -83,22 +82,6 @@ describe('シンデレラの定義', () => {
     const t = calc.slots[0]!.segments[0]!.trigger;
     // 1 発あたりの射撃ごとの倍率ダメージ（会心の期待値込み）を、会心なしの値に戻す
     expect(t.perShot / t.hitRate / (1 + t.boost.crit + t.boost.fullBurst)).toBeCloseTo(expected, 3);
-  });
-});
-
-describe.each([
-  ['シンデレラ単騎（録画 0124 の編成）', team([CINDERELLA], false, 0)],
-  ['ラム + デルタ + シンデレラ（段 6 の PR 2 の撮影の編成）', team([RAM, DELTA, CINDERELLA], true, 2)],
-])('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });
 

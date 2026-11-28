@@ -6,7 +6,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, statePiecesOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const ANCHOR = 355;
 const ANCHOR_SLOT = 1;
@@ -73,5 +73,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(new Set(burst.map((p) => p.slotIndex))).toEqual(new Set(input.slots.map((_, i) => i)));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

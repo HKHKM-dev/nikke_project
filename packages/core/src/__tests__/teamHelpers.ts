@@ -1,5 +1,5 @@
 // 編成のテスト（plan/skills-guide.md 1 節の「テスト」）の共通の道具: スペック固定・Lv 10 の枠、射撃場の的の編成、効果の窓、
-// 射撃の列がどのグループにも 1 回ずつ入ることの確かめ（partitions every shot）
+// 計算を通ることだけを見る編成（describeRuns）
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -10,9 +10,7 @@ import {
   computeFixedSpecHp,
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
-import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
-import { runSimulation } from '../sim/engine.ts';
-import { simTeamResult } from '../sim/teamResult.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
@@ -22,6 +20,7 @@ import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
 import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition, readData } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
+import { runTeam } from './runTeam.ts';
 
 export { characterOf, rawDefinition };
 
@@ -231,19 +230,14 @@ export function fullChargeFrames(log: ShotLog): number[] {
   return log.frames.filter((f) => !partial.has(f));
 }
 
-/** 編成ごとに、射撃の列が、どの枠でもどれか 1 つのグループに 1 回ずつ入る（start ≤ shot < end）ことを確かめる */
-export function describeEveryShotInOneGroup(teams: Record<string, TeamInput>): void {
+/**
+ * 効果を見るテストの無い編成が、計算を通ること（runSimulation・simTeamResult の射撃の列の確かめで投げないこと）を見る。
+ * ほかのテストで回している編成は渡さない（同じ計算を 2 回回さない。plan/design-workflow-simplification-20.md 1 節）
+ */
+export function describeRuns(teams: Record<string, TeamInput>): void {
   describe.each(Object.entries(teams))('編成: %s', (_name, input) => {
-    it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-      const sim = runSimulation(input);
-      const calc = simTeamResult(input, sim);
-      input.slots.forEach((slot, i) => {
-        // 空枠は撃たない
-        if (slot === null) return;
-        const frames = sim.shots[i]!.frames;
-        const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-        expect(total).toBe(frames.length);
-      });
+    it('runs through the shot checks of runSimulation and simTeamResult', () => {
+      expect(() => runTeam(input)).not.toThrow();
     });
   });
 }

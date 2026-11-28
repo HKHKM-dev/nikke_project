@@ -1,8 +1,6 @@
 // 2 段目の段 5 の PR 1（plan/design-skill-stage5.md 1.1・1.2・2.1 節）: バリアの状態（目録の家族 barrier）と、バリア適用状態の条件。
 // 使い手はラム（822）のバーストのバリアと、アスカ（830）の S2 の「自分がバリア適用状態なら有利コードの攻撃ダメージ▲」
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -86,19 +84,5 @@ describe('ラムのバーストのバリアとアスカ S2（plan/design-skill-s
     expect(itemsOf(without.history, { holder: 2, sourceSlotIndex: 2, kind: 'timed', stat: 'elementDamage' })).toEqual(
       [],
     );
-  });
-});
-
-describe('編成: ラム + デルタ + アスカ（風圧）', () => {
-  const input = teamOf([RUM, DELTA, ASUKA], 'Wind');
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

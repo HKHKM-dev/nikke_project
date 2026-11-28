@@ -1,12 +1,12 @@
 // ベルベット（316）を含む編成（plan/design-velvet.md）。語彙と単騎の S1 は skills/__tests__/velvet.test.ts。ここでは味方と組んだ時に:
 // S1: フルバーストの外のフルチャージだけで起き、S2: フルバーストの中のフルチャージと 50 回の命中だけで起きる。弾丸ポーチはバースト 2 段階
-// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（発動の 13f 後から 1 フレーム 1 発。V-0767）。射撃の列のグループ分け。
+// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（発動の 13f 後から 1 フレーム 1 発。V-0767）。
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, rawDefinition, skillValueOf } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, rawDefinition, skillValueOf } from './teamHelpers.ts';
 
 const VELVET = 316;
 
@@ -128,5 +128,3 @@ describe('プロダクト08 + グレイブ + ベルベット + アリス（ベ�
     for (const f of shots) expect(isInFullBurst(plan.schedule!, f) ? s1.has(f) : s2.has(f)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

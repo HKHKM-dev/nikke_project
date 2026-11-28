@@ -1,15 +1,13 @@
 // 2 段目の段 4 の PR 1（plan/design-skill-stage4.md 1.1・1.2・2.1 節）: { applied } を timed・状態の付与に開く、維持 0 秒の付与（名前の
 // 付いた即時効果の付いた記録）、トーブ（192）の宝物版 S1（代用弾丸が適用される時、味方全体に応急改造とクリティカルダメージ▲）
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { fixedEnemy, fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, describeRuns } from './teamHelpers.ts';
 
 const TORB = 192;
 const RAPI = 10;
@@ -257,15 +255,4 @@ const TEAMS: Record<string, TeamInput> = {
   ),
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
-});
+describeRuns(TEAMS);

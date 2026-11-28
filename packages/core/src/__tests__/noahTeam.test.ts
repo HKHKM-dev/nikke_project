@@ -1,10 +1,10 @@
 // ノア（232。RL・二丁持ち・バースト II）を含む編成: 二丁持ちの RL の通常攻撃は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。
 // スキルはどれもダメージに効く効果が無い（notes だけ。S2 の挑発はゲージを溜めない。C-1020）ので、定義の有無で値が変わらない。
-// 射撃の列のグループ分けも見る。V-0706。
+// V-0706。
 import { describe, expect, it } from 'vitest';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const rangeEnemy = rangeEnemyWithEvents();
 
@@ -45,9 +45,4 @@ describe('スキルはダメージを変えない（実戦寄り）', () => {
     const without: TeamInput = { ...PRACTICAL, slots: PRACTICAL.slots.map((s, i) => (i === 1 ? noahWithout : s)) };
     expect(runSimulation(PRACTICAL).totalDamage).toBe(runSimulation(without).totalDamage);
   });
-});
-
-describeEveryShotInOneGroup({
-  '単騎（V-0706 の撮影の条件）': SOLO,
-  '実戦寄り（リター + ノア + アリス + モダニア）': PRACTICAL,
 });

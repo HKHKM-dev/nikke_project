@@ -9,7 +9,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const NEON = 11;
 const SOLDIER_FA = 301;
@@ -45,7 +45,6 @@ const CASES: Record<string, { input: TeamInput; neon: number }> = {
     neon: 0,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neon }) => {
   const sim = runSimulation(input);
@@ -99,5 +98,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neon }) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

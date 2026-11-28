@@ -1,13 +1,13 @@
 // レイ（仮称）（834）を含む編成（plan/design-rei-tentative.md。V-0788）。語彙は skills/__tests__/reiTentative.test.ts。ここでは味方と組んだ時に:
 // レイ（仮称）がバーストを使った回は攻撃態勢が 10 秒付き、その間だけ 7 回命中の追加ダメージが出る。アスカ：WILLE がバーストを使った回は、
 // アンチA.T.フィールドが付いている間だけ 18 回命中の追加ダメージが出てスタックが 10 増え（上限 30）、殲滅態勢の味方への攻撃力▲は
-// アスカ：WILLE だけに、立ち上げ速度▲は直前にバーストを使った MG の味方（アスカ：WILLE）だけに付く。射撃の列のグループ分け。
+// アスカ：WILLE だけに、立ち上げ速度▲は直前にバーストを使った MG の味方（アスカ：WILLE）だけに付く。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { ENEMY } from '../skills/holders/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const REI = 834;
 const ASUKA = 835;
@@ -90,5 +90,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     expect(holders.includes(a)).toBe(a >= 0);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

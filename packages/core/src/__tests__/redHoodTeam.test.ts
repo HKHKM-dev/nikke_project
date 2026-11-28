@@ -9,7 +9,7 @@ import { appliedFrames } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { fixedTeam } from './teamHelpers.ts';
 
 const RED_HOOD = 470;
 const LITER = 82;
@@ -26,8 +26,6 @@ const TEAMS: Record<string, { input: TeamInput; redHood: number }> = {
     redHood: 2,
   },
 };
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, t]) => [name, t.input])));
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) => {
   const plan = planTeamRun(input);

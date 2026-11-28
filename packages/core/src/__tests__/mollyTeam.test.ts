@@ -12,7 +12,7 @@ import { staticStatesOf } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MOLLY = 590;
 const KURUMI = 862;
@@ -83,5 +83,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(dot(input)).toBeGreaterThan(dot(without));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

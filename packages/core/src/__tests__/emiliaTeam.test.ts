@@ -8,14 +8,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { applyChargeBuffs } from '../skills/buffs.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const EMILIA = 821;
 const LITER = 82;
@@ -111,5 +104,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

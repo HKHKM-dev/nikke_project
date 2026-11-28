@@ -11,13 +11,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const LEONA = 382;
 const LUDMILLA = 190;
@@ -150,5 +144,3 @@ describe('適正最大射程距離▲ と中近の距離ボーナス（撮影の
     for (const f of midFar) expect(bonusAt(1, f).every((b) => !b)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

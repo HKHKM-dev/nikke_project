@@ -7,7 +7,7 @@ import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ABYSSTA = 441;
 const ANIS_STAR = 17;
@@ -99,5 +99,3 @@ describe('アニス：スターのいない編成（アビスタ + I-DOLL・フ�
     expect(itemsOf(plan.history, { sourceSlotIndex: 0, kind: 'timed', skill: 'skill2' })).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

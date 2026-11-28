@@ -4,13 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  fullBurstCooldownCuts,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, fullBurstCooldownCuts, skillValueOf } from './teamHelpers.ts';
 
 const FROST_TICKET = 74;
 const CROWN = 330;
@@ -76,5 +70,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(windows[0]!.start).toBe(uses[0]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

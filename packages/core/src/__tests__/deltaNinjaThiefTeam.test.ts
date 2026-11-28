@@ -7,14 +7,7 @@ import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { slotPieces } from './historyHelpers.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, rangeEnemyWithEvents, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const DELTA_NT = 23;
 const COCOA = 311;
@@ -113,5 +106,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(ratio).toBeLessThan((1 + DISTRIBUTED) * 1.151);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
