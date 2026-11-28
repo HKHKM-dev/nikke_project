@@ -382,6 +382,7 @@ export function refillAmmo(
   if (state.phase === 'reloading' && state.ammo >= params.maxAmmo) {
     delete state.reloadLead;
     delete state.lastShotReload;
+    delete state.reloadEndWait;
     state.phase = 'priming';
     state.wait = Math.max(0, reloadFirstShotFrames(shot, model, params) - 1);
   }
@@ -789,6 +790,7 @@ export function reaimShooter(
   shorterFrames = 0,
 ): void {
   delete state.lastShotReload;
+  delete state.reloadEndWait;
   if (state.phase === 'reloading') return;
   if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * FRAMES_PER_GAME_SECOND) {
     state.shotsInMagazine = 0;

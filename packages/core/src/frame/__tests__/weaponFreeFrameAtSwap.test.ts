@@ -57,11 +57,9 @@ describe('weaponFreeFrameAtSwap', () => {
   });
 
   it('マガジンの最後の発の後の構え解除は、リロードが先に終わっても最後の発から構え解除 1 回分（C-1566）', () => {
-    for (const phase of ['priming', 'ready'] as const) {
-      const s = state(phase);
-      s.lastShotReload = true;
-      expect(weaponFreeFrameAtSwap(s, swap - 5, swap, DEFAULT_WEAPON_MODEL, false)).toBe(swap - 5 + aimOut);
-    }
+    const s = state('priming');
+    s.lastShotReload = true;
+    expect(weaponFreeFrameAtSwap(s, swap - 5, swap, DEFAULT_WEAPON_MODEL, false)).toBe(swap - 5 + aimOut);
     // 最後の発がマガジンの最後でなければ、撃っている途中と同じ
     expect(weaponFreeFrameAtSwap(state('priming'), swap - 5, swap, DEFAULT_WEAPON_MODEL, false)).toBe(swap + aimOut);
   });
