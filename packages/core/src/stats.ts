@@ -39,18 +39,19 @@ const GRADE_FLAT_KEY = { attack: 'gradeAttack', hp: 'gradeHp', defence: 'gradeDe
 const CORE_RATIO_KEY = { attack: 'coreAttack', hp: 'coreHp', defence: 'coreDefence' } as const;
 
 /**
- * value × (1 + core × ratio / 1e4) を丸める。丸めは偶数への丸め（C# の Math.Round の既定 = MidpointRounding.ToEven）で、
- * ちょうど .5 のときだけ四捨五入と違う（実測: 10,317,862.5 → 10,317,862、9,942,667.5 → 9,942,668、
- * 64,898.5 → 64,898。plan/verification.md Stage 12 節）。.5 を浮動小数の誤差で取り違えないよう整数で計算する
+ * value × (1 + core × ratio / 1e4) を倍精度の浮動小数で掛け、偶数への丸め（C# の Math.Round の既定 = MidpointRounding.ToEven）
+ * で整数にする（V-0903）。偶数への丸めが効くのは、掛けた浮動小数がちょうど .5 のときだけ（10,317,862.5 → 10,317,862、
+ * 9,942,667.5 → 9,942,668、64,898.5 → 64,898。plan/verification.md Stage 12 節）。真の値が .5 でも、浮動小数の誤差で .5 を
+ * 少し超えれば切り上げる（472,615 × 1.1 = 519,876.50000000006 → 519,877）
  */
 export function applyCoreRatio(value: number, core: number, ratio: number): number {
-  const scaled = value * (10000 + core * ratio);
-  if (!Number.isSafeInteger(scaled)) {
+  if (!Number.isSafeInteger(value * (10000 + core * ratio))) {
     throw new RangeError(`applyCoreRatio needs integers: value ${value}, core ${core}, ratio ${ratio}`);
   }
-  const quotient = Math.floor(scaled / 10000);
-  const remainder = scaled - quotient * 10000;
-  return remainder > 5000 || (remainder === 5000 && quotient % 2 !== 0) ? quotient + 1 : quotient;
+  const product = value * (1 + (core * ratio) / 10000);
+  const floor = Math.floor(product);
+  const fraction = product - floor;
+  return fraction > 0.5 || (fraction === 0.5 && floor % 2 !== 0) ? floor + 1 : floor;
 }
 
 /**
