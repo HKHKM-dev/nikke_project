@@ -83,9 +83,6 @@ describe('自分を除く（excludeSelf）', () => {
     );
     expect(() => parse({ ...timed, target: 'self', excludeSelf: 'always' })).toThrow(/excludeSelf/);
     expect(() => parse({ ...timed, target: 'topAttack', targetCount: 1, excludeSelf: 'yes' })).toThrow(/excludeSelf/);
-    expect(() => parse({ kind: 'passive', target: 'allies', stat: 'attack', ref: 1, excludeSelf: 'always' })).toThrow(
-      /excludeSelf is only allowed in timed/,
-    );
   });
 });
 

@@ -1,0 +1,341 @@
+{
+  "verification": "V-0900",
+  "note": "撮影 S（レーベル単騎・操作・オートバースト OFF）と撮影 T（レーベル（1 枠目）+ ジル（3 枠目・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON。frame は戦闘の始めからのモデルのフレーム。T のレーベルの 1 回目のバーストの妄想共有はモデルのフレーム 550〜1138",
+  "team": [
+    {
+      "rid": 582,
+      "slot": 1
+    },
+    {
+      "rid": 841,
+      "slot": 3,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（妄想は切れず、S2 のゲージ速度▲・攻撃力▲が戦闘中ずっと効く。妄想共有の 10 秒の間、自分を除く味方全体にレーベルのバフ前攻撃力の 80.36% を足す）"
+    },
+    {
+      "id": "H-noGauge",
+      "note": "S2 のゲージ速度▲が乗らない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 582,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noAtk",
+      "note": "S2 の自分の攻撃力▲が乗らない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 582,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-inclSelf",
+      "note": "妄想共有の攻撃力▲がレーベル自身にも乗る（自分を除かない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 582,
+            "skill": "skill2",
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 4,
+              "while": {
+                "selfState": "sharedDelusion"
+              }
+            },
+            "replace": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noShare",
+      "note": "妄想共有の攻撃力▲が乗らない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 582,
+            "skill": "skill2",
+            "index": 2
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "S-gauge-full-shot",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "team": [
+        {
+          "rid": 582,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 S。戦闘の最初のヒットから数えて、1 回目に BURST バーが消えたレーベルのヒットの番号（外れた発は数えない）"
+    },
+    {
+      "id": "S-label-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 S。レーベルの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。S2 の攻撃力▲が戦闘の始めから乗る"
+    },
+    {
+      "id": "T-label-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "slot": 1
+        },
+        {
+          "rid": 841,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 T。レーベルの 1 回目のバーストの前のレーベルの 1 ヒット"
+    },
+    {
+      "id": "T-label-hit-shared",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "slot": 1
+        },
+        {
+          "rid": 841,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 T。妄想共有の間のレーベルの 1 ヒット（自分を除くなら base と同じ）"
+    },
+    {
+      "id": "T-jill-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "slot": 1
+        },
+        {
+          "rid": 841,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 T。レーベルの 1 回目のバーストの前のジルの 1 ヒット（S1 の通常攻撃ダメージ▲の窓の中）"
+    },
+    {
+      "id": "T-jill-hit-shared",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "slot": 1
+        },
+        {
+          "rid": 841,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 T。妄想共有の間のジルの 1 ヒット（S1 の通常攻撃ダメージ▲の窓の中）"
+    },
+    {
+      "id": "T-jill-hit-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 582,
+          "slot": 1
+        },
+        {
+          "rid": 841,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 T。妄想共有が切れた後のジルの 1 ヒット（S1 の通常攻撃ダメージ▲の窓の中）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "a385fa308deb7c81c88283b68652ab316aed1d9a",
+    "values": {
+      "H1": {
+        "S-gauge-full-shot": 147,
+        "S-label-hit": 21092.3895,
+        "T-label-hit-base": 21092.3895,
+        "T-label-hit-shared": 21092.3895,
+        "T-jill-hit-base": 110715.4632,
+        "T-jill-hit-shared": 170096.23739999998,
+        "T-jill-hit-after": 110715.4632
+      },
+      "H-noGauge": {
+        "S-gauge-full-shot": 250,
+        "S-label-hit": 21092.3895,
+        "T-label-hit-base": 21092.3895,
+        "T-label-hit-shared": 21092.3895,
+        "T-jill-hit-base": 110715.4632,
+        "T-jill-hit-shared": 110715.4632,
+        "T-jill-hit-after": 170096.23739999998
+      },
+      "H-noAtk": {
+        "S-gauge-full-shot": 147,
+        "S-label-hit": 10900.071,
+        "T-label-hit-base": 10900.071,
+        "T-label-hit-shared": 10900.071,
+        "T-jill-hit-base": 110715.4632,
+        "T-jill-hit-shared": 170096.23739999998,
+        "T-jill-hit-after": 110715.4632
+      },
+      "H-inclSelf": {
+        "S-gauge-full-shot": 147,
+        "S-label-hit": 21092.3895,
+        "T-label-hit-base": 21092.3895,
+        "T-label-hit-shared": 29862.651,
+        "T-jill-hit-base": 110715.4632,
+        "T-jill-hit-shared": 170096.23739999998,
+        "T-jill-hit-after": 110715.4632
+      },
+      "H-noShare": {
+        "S-gauge-full-shot": 147,
+        "S-label-hit": 21092.3895,
+        "T-label-hit-base": 21092.3895,
+        "T-label-hit-shared": 21092.3895,
+        "T-jill-hit-base": 110715.4632,
+        "T-jill-hit-shared": 110715.4632,
+        "T-jill-hit-after": 110715.4632
+      }
+    }
+  }
+}
