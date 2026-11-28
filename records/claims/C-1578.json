@@ -1,0 +1,23 @@
+{
+  "id": "C-1578",
+  "text": "リバーレリオの S1 の「フルバーストタイムが発動した時、最終攻撃力が一番低い基本バースト段階 III の味方 1 機に、スキル発動者基準でチャージ速度 12.74%▲（10 秒）」は、リバーレリオより最終攻撃力の低い III のディーゼル：ウィンタースイーツに付き、フルバーストの始まりから 10 秒、そのチャージをリバーレリオの基礎チャージ時間 1.5 秒 × 12.74% = 0.1911 秒縮める（マガジンの中の発の間が 82f から 71f になる）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1416-09`・`1416-10`。V-0883",
+  "model": "反映（data/skills/262.json の skill1 の effects[7]。対象 lowestAttack・targetBurstStep。plan/design-lowest-attack.md）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/262.json の skill1 の effects[7]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1416",
+      "reproduced": "2-9",
+      "observations": ["1416-09", "1416-10"]
+    }
+  ],
+  "parameterFree": "説明文の値（12.74%・10 秒・1 機）と、発動者基準のチャージ速度の式（C-0474）・チャージの時間の確定の式（C-0013）"
+}
