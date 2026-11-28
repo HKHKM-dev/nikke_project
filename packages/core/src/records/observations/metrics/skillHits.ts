@@ -6,7 +6,7 @@ import {
   hitFramesOf,
   videoFrameOf,
 } from '../../../burst/schedule.ts';
-import { dotTickFrames, restartDotTicks } from '../../../frame/dot.ts';
+import { dotTicks, restartDotTicks } from '../../../frame/dot.ts';
 import type { SimResult } from '../../../sim/engine.ts';
 import { expectedHitCount, resolveDotEffects, type ResolvedDamageEffect } from '../../../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount } from '../../../skills/resolve.ts';
@@ -39,7 +39,9 @@ function dotTicksFromApplications(ctx: MetricContext): number[] {
   const until = Number(ctx.args.until);
   return dot.restartOnReapply === true
     ? restartDotTicks(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick)
-    : dotTickFrames(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick);
+    : dotTicks(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick, dot.maxStacks).map(
+        (t) => t.frame,
+      );
 }
 
 /** 枠の skill スロットの確率のきっかけの持続ダメージ（1 つ）が付く回数の期待値（発ごとの確率の和） */

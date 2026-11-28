@@ -480,8 +480,9 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
- * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed にだけ書け、
+ * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed・dot にだけ書け、
  * carry・atStart・periodShorten・gaugePerHit とは組まない（plan/design-arcana-magician.md 2.2 節・plan/design-centi.md 2.3 節）。
+ * dot は名前の付いた状態と組まない（plan/design-sakura-bis.md 2.1 節）。
  * burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
  * 後で予約するので、発火と同じフレームのゲージには足せない）。timed の遅れは発動のフレームから数える（解決で { skillFired } に置き換わり、
  * 窓は発動の delayFrames 後から。書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。同じスロットの印のある周期は

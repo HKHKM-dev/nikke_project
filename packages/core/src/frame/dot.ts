@@ -77,7 +77,8 @@ export type DotTick = { frame: number; stacks: number };
  * 持続ダメージの tick のフレームと、その時点のスタックの数（plan/design-raven-s1.md 4 節・8 節の 1）。
  * フレームの規則は dotTickTracker（dotTickFrames と同じ）。スタックの数は、いまのまとまり（維持の途中の再発火として
  * まとめた発火の列）のうち tick のフレームまでの発火の数（同じフレームの発火も数える）で、maxStacks で止める。
- * 既定の 1 なら、スタックしない持続ダメージ（どの tick も 1）。fires は昇順
+ * 既定の 1 なら、スタックしない持続ダメージ（どの tick も 1）。halfAfterLatest は latestDotTicks、スタックする atApplication は
+ * stackingApplicationTicks（付けるたびに刻みを数え直す）。fires は昇順
  */
 export function dotTicks(
   fires: readonly number[],

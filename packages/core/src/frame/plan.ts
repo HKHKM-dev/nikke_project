@@ -631,9 +631,16 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
         : [],
     );
   const mine = (ctx.schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
+  // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）。発動の有無によらず、定義で弾く
+  if (
+    sequential &&
+    [
+      ...resolveDamageEffects(definition, slot.character, levels),
+      ...resolveDotEffects(definition, slot.character, levels),
+    ].some((e) => e.perBurstHit === true)
+  )
+    throw new RangeError('a sequential burst cannot have perBurstHit effects');
   const perBurstHitActivation = (fireFrame: number): BurstActivation => {
-    // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
-    if (sequential) throw new RangeError('a sequential burst cannot have perBurstHit effects');
     const activation = mine.find((a) => effectFrameOf(a) === fireFrame);
     if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${fireFrame}`);
     return activation;
