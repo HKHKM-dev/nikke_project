@@ -36,9 +36,11 @@ function wantedKeyOf(resourceIds: readonly (number | null)[]): string {
 
 /** 定義一覧（support.json）を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
 export function useSkillDefinitions(resourceIds: readonly (number | null)[], baseUrl: string): SkillDefinitionCache {
-  const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
+  // support.json の 2 つの一覧（読み込み前と、読めなかったときは null）
+  const [support, setSupport] = useState<{ defined: ReadonlySet<number>; fullySupported: ReadonlySet<number> } | null>(
+    null,
+  );
   const [indexError, setIndexError] = useState<string | null>(null);
-  const [fullySupported, setFullySupported] = useState<ReadonlySet<number> | null>(null);
   const [definitions, setDefinitions] = useState<ReadonlyMap<number, SkillDefinition>>(() => new Map());
   const [errors, setErrors] = useState<ReadonlyMap<number, string>>(() => new Map());
   // 取得を開始した id（完了・失敗も含む）。state ではなく ref に持ち、取得完了で Effect を再実行させない
@@ -46,14 +48,12 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
 
   useEffect(() => {
     loadSkillSupportIndex({ baseUrl })
-      .then((s) => {
-        setIndex(new Set(s.defined));
-        setFullySupported(new Set(s.fullySupported));
-      })
+      .then((s) => setSupport({ defined: new Set(s.defined), fullySupported: new Set(s.fullySupported) }))
       .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
   }, [baseUrl]);
 
   const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);
+  const index = support?.defined ?? null;
 
   useEffect(() => {
     if (index === null || wantedKey === '') return;
@@ -71,8 +71,8 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
   // 届いて描き直すたびに入力が変わって計算を出し直し続ける
   return useMemo(
-    () => ({ index, indexError, fullySupported, definitions, errors }),
-    [index, indexError, fullySupported, definitions, errors],
+    () => ({ index, indexError, fullySupported: support?.fullySupported ?? null, definitions, errors }),
+    [index, indexError, support, definitions, errors],
   );
 }
 

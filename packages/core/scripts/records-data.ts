@@ -28,7 +28,7 @@ import { TREASURE_PHASE_MAX, treasureSlots } from '../src/skills/treasure.ts';
 import { parseSkillDefinition } from '../src/skills/parse/definition.ts';
 import type { SkillDefinition, SkillSupportIndex } from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
-import { definedSkillIds } from './defined-skills.ts';
+import { definedSkillIds, resourceIdsIn } from './defined-skills.ts';
 
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
@@ -241,11 +241,7 @@ export function misplacedObservations(): string[] {
 }
 
 export function knownRids(): Set<number> {
-  return new Set(
-    readdirSync(`${DATA}characters`)
-      .filter((name) => /^\d+\.json$/.test(name))
-      .map((name) => Number(name.replace('.json', ''))),
-  );
+  return new Set(resourceIdsIn(`${DATA}characters`));
 }
 
 /** 敵のプリセットと出来事のセット（data/enemies.json） */

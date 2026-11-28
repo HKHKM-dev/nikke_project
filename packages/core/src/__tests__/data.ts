@@ -1,4 +1,4 @@
-// テストの共通の道具: データ（packages/core/data/）と観測値（records/observations/）を読む。import は node:fs・型と、node:fs だけを読む scripts/defined-skills.ts にする
+// テストの共通の道具: データ（packages/core/data/）と観測値（records/observations/）を読む。import は node:fs・型・scripts/defined-skills.ts だけにする
 // （計算の本体を読み込まないので、定義の読み込みだけを見る単体テストも軽いまま使える）。枠・編成・敵を作る道具は teamHelpers.ts
 import { readFileSync } from 'node:fs';
 import { definedSkillIds } from '../../scripts/defined-skills.ts';

@@ -77,8 +77,12 @@ describe('buildSkillSupportIndex', () => {
   it('round-trips through the file and rejects a malformed index', () => {
     const index = { formatVersion: 1 as const, defined: [3, 5, 7], fullySupported: [3, 7] };
     expect(parseSkillSupportIndex(JSON.parse(renderSkillSupportIndex(index)))).toEqual(index);
-    expect(() => parseSkillSupportIndex({ formatVersion: 2, defined: [], fullySupported: [] })).toThrow(/formatVersion/);
-    expect(() => parseSkillSupportIndex({ formatVersion: 1, defined: [], fullySupported: [0] })).toThrow(/positive integers/);
+    expect(() => parseSkillSupportIndex({ formatVersion: 2, defined: [], fullySupported: [] })).toThrow(
+      /formatVersion/,
+    );
+    expect(() => parseSkillSupportIndex({ formatVersion: 1, defined: [], fullySupported: [0] })).toThrow(
+      /positive integers/,
+    );
     expect(() => parseSkillSupportIndex({ formatVersion: 1, fullySupported: [] })).toThrow(/support.defined/);
     expect(() => parseSkillSupportIndex([])).toThrow(/object/);
   });

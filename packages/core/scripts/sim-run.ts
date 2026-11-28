@@ -48,9 +48,9 @@ import { parseSkillDefinition } from '../src/skills/parse/definition.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
-import { definedSkillIds } from './defined-skills.ts';
 import { gameSecondsToFrame } from '../src/time.ts';
 import { cliArgs, fail } from './cli.ts';
+import { definedSkillIds } from './defined-skills.ts';
 import {
   activationRows,
   AUTO_CONDITION_TITLE,
@@ -264,9 +264,7 @@ if (values.enemy !== undefined && enemyPreset === undefined) {
 
 const slots: TeamSlotInput[] = ids.map((id) => {
   const character = readJson(join(DATA_DIR, `characters/${id}.json`)) as CharacterData;
-  const definition = definedIds.has(id)
-    ? parseSkillDefinition(readJson(join(DATA_DIR, `skills/${id}.json`)))
-    : null;
+  const definition = definedIds.has(id) ? parseSkillDefinition(readJson(join(DATA_DIR, `skills/${id}.json`))) : null;
   // 段階の範囲・宝物の有無は runSimulation が検証する（RangeError）
   const skills = {
     definition,

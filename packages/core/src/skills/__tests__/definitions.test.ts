@@ -37,10 +37,10 @@ import {
   type StateContentItem,
   statContentsOf,
 } from '../types.ts';
-import { definedSkillIds } from '../../../scripts/defined-skills.ts';
-import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { RESOURCE_FILE, SKILLS_DIR } from '../../../scripts/defined-skills.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from '../../__tests__/data.ts';
 
-const files = definedSkillIds();
+const definedIds = [...DEFINED_IDS];
 
 /**
  * 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ（D の S2 の気絶免疫、アスカの
@@ -100,14 +100,15 @@ function contentRefsOf(c: StateContentItem): number[] {
 }
 
 describe('data/skills', () => {
-  // 定義のあるキャラの一覧はディレクトリから決まる（scripts/defined-skills.ts）。ほかに置くのは生成物の support.json だけ
+  // 定義のあるキャラの一覧は <resourceId>.json の名前から決まる（scripts/defined-skills.ts）。名前を誤った定義（一覧から黙って
+  // 抜ける）と、一覧のファイルを置いていないかを見る。ほかに置くのは生成物の support.json だけ
   it('holds only the definitions and support.json', () => {
-    const others = readdirSync(new URL('../../../data/skills/', import.meta.url)).filter((n) => !/^\d+\.json$/.test(n));
+    const others = readdirSync(SKILLS_DIR).filter((n) => !RESOURCE_FILE.test(n));
     expect(others).toEqual(['support.json']);
   });
 
   // 基礎版と、treasureSkills があれば宝物版（全段階で差し替えたもの）
-  const variants = files.flatMap((resourceId) => {
+  const variants = definedIds.flatMap((resourceId) => {
     const def = parseSkillDefinition(rawDefinition(resourceId));
     const character = characterOf(resourceId);
     const base = { label: `${resourceId}`, resourceId, def, character };
@@ -119,7 +120,7 @@ describe('data/skills', () => {
     ];
   });
 
-  describe.each(files)('treasure definition %i (Stage 9)', (resourceId) => {
+  describe.each(definedIds)('treasure definition %i (Stage 9)', (resourceId) => {
     const def = parseSkillDefinition(rawDefinition(resourceId));
     const character = characterOf(resourceId);
 
