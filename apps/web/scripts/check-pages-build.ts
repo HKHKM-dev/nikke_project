@@ -2,10 +2,13 @@
 //   node apps/web/scripts/check-pages-build.ts apps/web/dist /nikke_project/
 // 見るもの: index.html が参照するスクリプト・スタイルが base の下にあること、バンドルに base が埋め込まれていること
 // （データの fetch は import.meta.env.BASE_URL を前に付ける）、データ（キャラ・スキル定義・育成のマスタ・敵のプリセット）が同梱されていること、
-// 計算の Web Worker（src/worker.ts。plan/design-unify-sim-calc.md 6.2 節）の束があり、画面の束が base の下のそれを指していること。
+// 計算の Web Worker（src/worker.ts。plan/design-unify-sim-calc.md 6.2 節）の束があり、画面の束が base の下のそれを指していること、
+// スキル定義の一覧（skills/support.json の defined）と同梱した定義のファイル（skills/<resourceId>.json）が合っていること。
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { resourceIdsIn } from '../../../packages/core/scripts/defined-skills.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../../../packages/core/src/load.ts';
+import { parseSkillSupportIndex } from '../../../packages/core/src/skills/parse/definition.ts';
 
 /** 問題の一覧（空なら合格） */
 export function checkPagesBuild(distDir: string, base: string): string[] {
@@ -48,7 +51,33 @@ export function checkPagesBuild(distDir: string, base: string): string[] {
   for (const file of data) {
     if (!existsSync(join(distDir, file))) problems.push(`${file} is not in the build`);
   }
+  problems.push(...checkSkillFiles(distDir));
   return problems;
+}
+
+/**
+ * skills/support.json の defined（画面が定義を読むキャラの一覧）と、同梱した skills/<resourceId>.json が合っているか。
+ * 一覧に無い定義は画面が読まず、一覧にあってファイルの無いキャラは読み込みが失敗する
+ */
+export function checkSkillFiles(distDir: string): string[] {
+  const supportFile = join(distDir, 'skills/support.json');
+  if (!existsSync(supportFile)) return [];
+  let defined: number[];
+  try {
+    defined = parseSkillSupportIndex(JSON.parse(readFileSync(supportFile, 'utf8'))).defined;
+  } catch (e) {
+    return [`skills/support.json cannot be read: ${e instanceof Error ? e.message : String(e)}`];
+  }
+  const files = new Set(resourceIdsIn(join(distDir, 'skills')));
+  const listed = new Set(defined);
+  return [
+    ...defined
+      .filter((id) => !files.has(id))
+      .map((id) => `skills/${id}.json is listed in support.json but not in the build`),
+    ...[...files]
+      .filter((id) => !listed.has(id))
+      .map((id) => `skills/${id}.json is in the build but not listed in support.json`),
+  ];
 }
 
 if (import.meta.main) {

@@ -30,6 +30,7 @@ import {
   ceilChunkFrames,
   firstShotFrames,
   fullReloadFrames,
+  fullReloadLeadFrames,
   rateAfterShots,
   reloadFirstShotFrames,
   reloadStartOffset,
@@ -84,6 +85,12 @@ export type ShooterState = {
    * したとき・構え直し（reaimShooter）で消す）。残弾数減少・ハイド中のリロードには付かない。無ければキーごと無い
    */
   lastShotReload?: true;
+  /**
+   * 最終弾から始めた全弾リロード（分割でない・ハイド中でない・押下チャージ型でない）で込め終えて 1 発目を待つ間（priming）の、ゲームの込め終わり
+   * （RELOADING のバーが消える）の時の wait。射手は込め終わりの k 前に残弾を満たす（cadence.ts の fullReloadFrames）ので、wait がこれより
+   * 大きい間はゲームではまだリロード中（weaponFreeFrameAtSwap）。lastShotReload があるときだけ意味を持つ。無ければキーごと無い
+   */
+  reloadEndWait?: number;
   /** 次に何かが起きるまでの残りフレーム（初弾遅延・チャージ・リロードの 1 回分） */
   wait: number;
   /** レート蓄積（非チャージ武器の 2 発目以降） */
@@ -215,6 +222,8 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
     );
     if (first === 0) return true;
     state.wait = first - 1;
+    if (state.lastShotReload && !params.splitReload && !state.hideReload && !params.downCharge)
+      state.reloadEndWait = state.wait - fullReloadLeadFrames(shot, model, params);
     // 押下チャージ型: 1 発目の待ち（チャージ + 解放）は、込め終えた時に決めず、解放の分を負の経過から数えて毎フレームその時の
     // チャージ時間で決め直す。窓の終わり（0.7 秒 → 1 秒）がこのチャージの途中に来ると、経過を持ち越して 1 秒に届いたら撃つ（C-0541）
     if (params.downCharge) state.chargeElapsed = -model.chargeReleaseFrames;
@@ -271,6 +280,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
 /** マガジンを戻す（込め終えて 1 発目を撃つフレーム。MG のレートもここで最初に戻す） */
 function startMagazine(state: ShooterState): void {
   delete state.lastShotReload;
+  delete state.reloadEndWait;
   state.phase = 'ready';
   state.shotsInMagazine = 0;
   state.spunShots = 0;
@@ -372,6 +382,7 @@ export function refillAmmo(
   if (state.phase === 'reloading' && state.ammo >= params.maxAmmo) {
     delete state.reloadLead;
     delete state.lastShotReload;
+    delete state.reloadEndWait;
     state.phase = 'priming';
     state.wait = Math.max(0, reloadFirstShotFrames(shot, model, params) - 1);
   }
@@ -515,7 +526,9 @@ function startNextCharge(
  * 基礎の武器から持ち替えるフレーム swap に、武器が空くフレーム（plan/design-red-hood.md 7.1 節の論点 13。C-0897・C-1566）。
  * 構え解除（最後の発 lastShot から aimOutFrames）は、チャージ武器なら毎発の後、チャージの無い武器ならマガジンの最後の発の後
  * （リロードに入る）にだけある。構え解除の途中なら構え解除の終わり、そうでなくリロード中なら swap、構えたまま（チャージの途中・
- * チャージの無い武器の撃っている途中・まだ撃っていない射手）なら構え解除 1 回分の後。aimedNoAimOut なら、構えたままでも swap
+ * チャージの無い武器の撃っている途中・まだ撃っていない射手）なら構え解除 1 回分の後。リロード中はゲームの表示（RELOADING のバー）で
+ * 数え、最終弾から始めた全弾リロードの込め終わりの前の priming（reloadEndWait）を含む。マガジンの最後の発の後の構え解除は、
+ * リロードが構え解除より先に終わっても最後の発から aimOutFrames 続く（lastShotReload）。aimedNoAimOut なら、構えたままでも swap
  * （WeaponChangeEffect.aimedSwapNoAimOut。C-1598）
  */
 export function weaponFreeFrameAtSwap(
@@ -526,8 +539,17 @@ export function weaponFreeFrameAtSwap(
   chargeWeapon: boolean,
   aimedNoAimOut = false,
 ): number {
-  const reloading = state.phase === 'reloading';
-  const aimOutEnd = lastShot === undefined || !(chargeWeapon || reloading) ? -Infinity : lastShot + model.aimOutFrames;
+  const lastMagazineShot = state.lastShotReload === true;
+  const reloading =
+    state.phase === 'reloading' ||
+    (lastMagazineShot &&
+      state.phase === 'priming' &&
+      state.reloadEndWait !== undefined &&
+      state.wait > state.reloadEndWait);
+  const aimOutEnd =
+    lastShot === undefined || !(chargeWeapon || reloading || lastMagazineShot)
+      ? -Infinity
+      : lastShot + model.aimOutFrames;
   if (aimOutEnd > swap) return aimOutEnd;
   return reloading || aimedNoAimOut ? swap : swap + model.aimOutFrames;
 }
@@ -768,6 +790,7 @@ export function reaimShooter(
   shorterFrames = 0,
 ): void {
   delete state.lastShotReload;
+  delete state.reloadEndWait;
   if (state.phase === 'reloading') return;
   if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * FRAMES_PER_GAME_SECOND) {
     state.shotsInMagazine = 0;
