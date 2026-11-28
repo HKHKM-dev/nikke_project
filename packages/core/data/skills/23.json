@@ -1,0 +1,166 @@
+{
+  "formatVersion": 1,
+  "resourceId": 23,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "敵全体は敵 1 体。忍法アシッドボムの受けるダメージ▲を、味方全体の与ダメージの乗数として持つ。忍法ハイパーアシッドボム（effects[2]）とは名前の違う別の効果で、ほかの受けるダメージ▲と 1 つの和で掛かる",
+            "en": "All enemies is the lone enemy. The Damage Taken up of Ninja Acid Bomb is held as a multiplier on all allies' damage. It is a separate effect from Ninja Hyper Acid Bomb (effects[2]) under a different name, and joins the other Damage Taken ups in one sum"
+          },
+          "claims": [
+            "C-1580"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "バースト使用時の効果は発動の印（II の六角形の替わり目）の 1〜2f 後から乗る（遅れの表の行）。切れ目はバーストの効果より数 f 遅い（数 f の差は直さない）",
+            "en": "Burst-use effects apply from 1-2 frames after the activation mark (the II hexagon change; the burst delay table row). It ends a few frames later than the Burst effects (a few frames are not modeled)"
+          },
+          "claims": [
+            "C-1580"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "照準線に最も近い攻撃範囲内の敵は敵 1 体。忍法ハイパーアシッドボムの受けるダメージ▲を、味方全体の与ダメージの乗数として持つ。忍法アシッドボム（effects[0]）と同時に付けば、2 つの値の和で掛かる。実機では発動の印の 7f 後から乗る（攻撃力▲より約 6f 遅い）が、モデルは effects[1] と同じフレームに付ける（数 f の差は直さない）",
+            "en": "The enemy closest to the crosshair within range is the lone enemy. The Damage Taken up of Ninja Hyper Acid Bomb is held as a multiplier on all allies' damage. When it overlaps Ninja Acid Bomb (effects[0]), the two values are summed. In game it applies from 7 frames after the activation mark (about 6 frames later than the ATK up); the model applies it on the same frame as effects[1] (a few frames are not modeled)"
+          },
+          "claims": [
+            "C-1580"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時、味方に自分を除く防御型がいない場合の、自分へのヘイト（敵全体を挑発・持続）はダメージに関係しない（付けた時にゲージを溜めない。ティアの S2 と同じ形）",
+          "en": "Hate (taunting all enemies, continuous) on self at the start of battle when there is no other Defender in the team does not affect damage (it charges no gauge when applied, as with Tia's Skill 2)",
+          "kind": "noDamage",
+          "claims": [
+            "C-1583"
+          ]
+        },
+        {
+          "ja": "戦闘開始時、味方に自分を除く防御型がいない場合の自分へのバリア（10 秒）と、通常攻撃で 200 回攻撃した時、ヘイト状態なら自分に付くバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは自分がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on self at the start of battle when there is no other Defender in the team (10 s), and the barrier on self while in Hate after 200 normal attacks (10 s), do not change damage by themselves (they matter only with an effect reading barriers in the team; these are not defined, so the model does not put self in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "味方に自分を除く防御型がいる場合の忍法カモフラージュ（単一攻撃対象から除外・直接攻撃を受けると解除）は、被弾しない前提では除外も解除も起きない（10 秒続く）",
+          "en": "Ninja Camouflage (excluded from single-target attacks, removed on a direct hit) when there is another Defender in the team: neither the exclusion nor the removal happens under the no-damage-taken premise (it lasts 10 s)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "味方に自分を除く防御型がいる場合の、忍法注射器（自分の吸収回復）と、4 秒ごとに注射器状態なら自分に付く忍法救急キット（4 秒の間に受けた回復を蓄積し、終わった後に味方全体を蓄積量に応じて回復）は定義していない。蓄積した回復を放出する語彙が無い。味方全体の回復は、回復を受けた時の効果を持つ味方の発動を変えうる",
+          "en": "Ninja Syringe (lifesteal on self) and Ninja First Aid Kit (applied to self every 4 s while in Ninja Syringe; it stores the healing received over 4 s and then heals all allies by the stored amount) when there is another Defender in the team are not defined. There is no vocabulary for releasing stored healing. The heal on all allies could change the activation of allies' effects triggered on being healed",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "distributedDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1581"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1581"
+          ]
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる。発動の印の 3f 後に 1 ヒットで出て、同じ発動の effects[0]・[1] が乗る（遅れの表の行）",
+            "en": "The distributed damage to all enemies lands in full on the lone enemy. It lands as one hit 3 frames after the activation mark and carries effects[0] and [1] of the same activation (the burst delay table row)"
+          },
+          "claims": [
+            "C-1582"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ヘイト状態の時の、自分の次のバリアの HP▲（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く）",
+          "en": "The next-barrier HP up on self while in Hate (10 s) does not change damage by itself (it matters only with an effect reading barriers in the team)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "忍法注射器状態の時の、忍法救急キットの最大蓄積量▲（10 秒）は、S2 の救急キット（未対応）の回復の量だけを変える",
+          "en": "The Ninja First Aid Kit storage cap up while in Ninja Syringe (10 s) only changes the amount of the S2 First Aid Kit heal (not supported)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    }
+  }
+}

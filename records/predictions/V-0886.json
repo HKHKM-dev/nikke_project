@@ -1,0 +1,235 @@
+{
+  "verification": "V-0886",
+  "note": "ココア（I）+ レイヴン（III）+ デルタ：ニンジャシーフ（II・操作）・灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。hitDamage のフレームはモデルのフレームで、1 回目のチェーンの窓の中に置く（デルタの発動 f449・フルバーストの始まり f483・デルタの▲の終わり f1037・フルバーストの終わり f1071・アシッドボムの終わり f1365。デルタは f400〜571 と f959〜1130 にリロードで撃たない）",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 851
+    },
+    {
+      "rid": 23,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "撮る前の定義（2 つの受けるダメージ▲は別の効果で、和で掛かる。バーストの分配ダメージは遅れの表に行が無く、本当の発動に 1 ヒットで、発動の直前のバフで出す。戦闘開始の挑発はゲージを溜めない）"
+    },
+    {
+      "id": "H0-acid",
+      "note": "S1 の忍法アシッドボム（フルバーストの始まりの受けるダメージ▲）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 23,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-hyper",
+      "note": "S1 の忍法ハイパーアシッドボム（バースト使用時の受けるダメージ▲）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 23,
+            "skill": "skill1",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-caster",
+      "note": "バーストの発動者基準の攻撃力▲が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 23,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "▲の無い時のデルタのコアの 1 ヒット（会心・距離ボーナスなし）"
+    },
+    {
+      "id": "hit-both",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "フルバーストの中（攻撃力▲ 2 つと 2 つの受けるダメージ▲）のコアの 1 ヒット"
+    },
+    {
+      "id": "hit-acid",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "フルバーストの終わりからアシッドボムの終わりまで（アシッドボムだけ）のコアの 1 ヒット"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "バーストの分配ダメージの 1 回目（会心なし）"
+    },
+    {
+      "id": "raven-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "レイヴンのバーストスキルダメージの 1 回目（会心なし）。発動の直前のバフで出る（C-0795）ので、デルタの発動者基準の攻撃力▲とハイパーアシッドボムが乗り、フルバーストの始まりのアシッドボムは乗らない"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "発動の印（六角形の替わり目）から分配ダメージのヒットまでの動画のフレーム"
+    },
+    {
+      "id": "burst-frames",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "最初の 5 回の発動の段の表示の動画のフレーム（戦闘開始の挑発がゲージを溜めれば早まる）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "495f645ef7874392e436aeda3472808a35aaa881",
+    "values": {
+      "H1": {
+        "hit-base": 9785.309159999999,
+        "hit-both": 19092.712320000006,
+        "hit-acid": 10959.546259200002,
+        "burst-hit": 149326.98000000004,
+        "raven-burst-hit": 700701.0267599999,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-frames": [509, 538, 567, 1709, 2886]
+      },
+      "H0-acid": {
+        "hit-base": 9785.309159999999,
+        "hit-both": 17183.441088000003,
+        "hit-acid": 9785.309159999999,
+        "burst-hit": 149326.98000000004,
+        "raven-burst-hit": 700701.0267599999,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-frames": [509, 538, 567, 1709, 2886]
+      },
+      "H0-hyper": {
+        "hit-base": 9785.309159999999,
+        "hit-both": 17819.864832000007,
+        "hit-acid": 10959.546259200002,
+        "burst-hit": 149326.98000000004,
+        "raven-burst-hit": 648797.247,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-frames": [509, 538, 567, 1709, 2886]
+      },
+      "H0-caster": {
+        "hit-base": 9785.309159999999,
+        "hit-both": 16888.278989999995,
+        "hit-acid": 10959.546259200002,
+        "burst-hit": 149326.98000000004,
+        "raven-burst-hit": 636936.16464,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-frames": [509, 538, 567, 1709, 2886]
+      }
+    }
+  }
+}

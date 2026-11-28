@@ -252,6 +252,16 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [312], delays: { hitFrames: 65, effectFrames: 0 }, claim: 'C-1472' },
   // マリ
   { resourceIds: [832], delays: { hitFrames: 69, effectFrames: 0 }, claim: 'C-1483' },
+  // デルタ：ニンジャシーフ: II の発動（六角形が II から III に替わるフレーム）から分配ダメージの 1 ヒットまで 3f（2 本の 10 回のうち 9 回。
+  // 1 回は 2f）。ヒットに同じ発動の burst スロットの▲（分配ダメージ▲・発動者基準の攻撃力▲）が乗り、S1 のバースト使用時の▲は乗らない
+  // （同じ発動の▲がヒットに乗る行）。バースト使用時の効果（攻撃力▲）は替わり目の 1〜2f 後から乗るので 1f。S1 のハイパーアシッドボムは
+  // 替わり目の 7f 後から乗るが、この行の遅れで揃える（数 f の差は直さない）
+  {
+    resourceIds: [23],
+    sameActivationBuffsOnHit: true,
+    delays: { hitFrames: 3, effectFrames: 1 },
+    claim: 'C-1582',
+  },
 ];
 
 /**

@@ -106,6 +106,7 @@ describe('data: which burstDamage get the allEnemies mark', () => {
     expect(marked).toMatchInlineSnapshot(`
       [
         "19",
+        "23",
         "40",
         "61",
         "103",
