@@ -494,7 +494,9 @@ const SHOT_TRIGGERS: ReadonlySet<string> = new Set([
   'chargeTick',
   'chargeFull',
 ]);
-const FULL_BURST_TRIGGERS: ReadonlySet<string> = new Set([
+/** 編成のバーストで起きるきっかけ（単騎ではバーストを使わないので起きない。C-0024） */
+const TEAM_BURST_TRIGGERS: ReadonlySet<string> = new Set([
+  'allyBurstUse',
   'fullBurstStart',
   'fullBurstEnd',
   'burstStage2Enter',
@@ -515,7 +517,7 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
     if (element.skillSlot === 'burst' && element.type !== 'noDefinition') return why;
     if (trigger === 'burstUse' || trigger === 'burstHit') return why;
   }
-  if (single && trigger !== undefined && FULL_BURST_TRIGGERS.has(trigger)) return '単騎（C-0024）';
+  if (single && trigger !== undefined && TEAM_BURST_TRIGGERS.has(trigger)) return '単騎（C-0024）';
   return undefined;
 }
 

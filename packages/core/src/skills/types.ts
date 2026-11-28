@@ -609,7 +609,9 @@ export type WhileCondition =
  * burstHit = 自分のバーストの倍率ダメージのヒット（遅れの表の hitFrames のフレーム。分かれたヒット（hitOffsets）はそれぞれのヒットで
  * 発火し、同じ効果は上書き延長で付け直す。plan/design-elegg.md 8.9 節・plan/design-burst-hit-reapply.md 5 節）。burst スロットの timed・付与に
  * だけ書ける（validateBurstHitTriggers）。burstUse の効果の発火（effectFrames）とヒットが違うフレームのキャラで、ヒットから付く効果
- * （ブームインストール）と、分かれたヒットのそれぞれが付け直す効果（シグナル・ミカの防御力▼）を書く
+ * （ブームインストール）と、分かれたヒットのそれぞれが付け直す効果（シグナル・ミカの防御力▼）を書く。
+ * allyBurstUse = 味方（自分を含む編成のどの枠）がバーストスキルを使った時。その発動の効果のフレーム（burstUse と同じ effectFrames）に
+ * 発火し、同じフレームに 2 つの発動の効果が重なっても 1 回だけ（plan/design-rupee-ws.md 2.1 節）
  */
 export type BuffTrigger =
   | 'battleStart'

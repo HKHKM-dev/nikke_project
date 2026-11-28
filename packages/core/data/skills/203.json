@@ -48,8 +48,8 @@
             }
           },
           "assumes": {
-            "ja": "フルスタックかはフルバーストの終わりのフレームに、自分のショッピングの段で見る。各味方の弾のゲージに掛かる（シンの S2 の自分への▲と同じ効き方）",
-            "en": "Full stacks are checked on the frame the Full Burst ends, by her own Shopping stacks. Applies to the gauge from each ally's own bullets (the same way as Sin's S2 on herself)"
+            "ja": "フルスタックかはフルバーストの終わりのフレームに、自分のショッピングの段で見る。対象の枠ごとに、その枠の射撃で溜まるゲージに掛かる（アリス：ワンダーランドバニーの S2 と同じ効き方）",
+            "en": "Full stacks are checked on the frame the Full Burst ends, by her own Shopping stacks. Applies, per recipient, to the gauge charged by that unit's shots (the same way as Alice: Wonderland Bunny's S2)"
           }
         }
       ]
