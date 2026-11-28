@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 203・効果 1330（根拠あり 1308）・notes 485（根拠あり 186）
+件数: キャラ 204・効果 1335（根拠あり 1313）・notes 489（根拠あり 188）
 
-notes の種類: 未対応 45・前提の外 168・計算に無関係 104・補足 45・間接 123
+notes の種類: 未対応 45・前提の外 170・計算に無関係 105・補足 45・間接 124
 
-スロット: supported 547・partial 17・unsupported 18・noEffect 90
+スロット: supported 550・partial 17・unsupported 18・noEffect 90
 
 ## 10 ラピ
 
@@ -2668,6 +2668,21 @@ notes の種類: 未対応 45・前提の外 168・計算に無関係 104・補�
   - effects[0] state・burstUse・wheelOfFortune（attackDamage）: C-1050（確定）、C-1054（確定）
   - effects[1] burstDamage・skill: C-1051（確定）
   - effects[2] state・burstUse・judgment（damageTaken）: C-1050（確定）
+
+## 582 レーベル
+
+- **skill1**: supported
+  - effects[0] state・battleStart・delusion: C-1619（確定）
+  - notes[0] 前提の外（読む: バリア）: 妄想が終了した時の妄想崩壊（想像失恋：単一攻撃の対象から除外・気絶。1 秒 × 妄想崩壊の回数）は、被弾で妄想のバリアが尽きたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）。起きれば、気絶の間はレーベルが撃たない: C-1619（確定）
+  - notes[1] 前提の外（読む: バリア）: 通常攻撃をした時・バーストスキルを使用した時の、妄想状態でなければ自分に付く妄想は、被弾で妄想が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）: C-1619（確定）
+- **skill2**: supported
+  - effects[0] timed・battleStart・burstGaugeSpeed: C-1619（確定）
+  - effects[1] timed・battleStart・attack: C-1619（確定）
+  - effects[2] passive・sharedDelusion の間・attack: C-1620（確定）
+  - notes[0] 計算に無関係: 戦闘開始時の、自分を除く味方全体への電撃コードの敵から受けるダメージ▼（5 秒）と、妄想状態の時の自分の電撃コードの敵から受けるダメージ▼は、ダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・sharedDelusion: C-1620（確定）
+  - notes[0] 間接（HP）: 自分の最大HP▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 583 アルカナ：フォーチュンメイト
 

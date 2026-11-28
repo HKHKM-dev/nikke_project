@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 1181・仮説 220・棄却 162・範囲外 2（計 1565）
+件数: 確定 1183・仮説 220・棄却 162・範囲外 2（計 1567）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -10976,6 +10976,22 @@
   - 合わせ込みの定数なし: 説明文の値（攻撃力 値 01 %・値 02 秒）と、ターゲットの出現を戦闘開始とみる読み（C-0662）
   - 検証記録: V-0894
   - 定義: `data/skills/112.json` の skill1 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[0]
+- **C-1619** レーベルの S1 の妄想は戦闘開始時に付き、射撃場では切れない（操作して敵の光線を受けても、BURST バーが満タンになるまで残る）。S2 の妄想の間のバーストゲージのチャージ速度 70.4%▲・攻撃力 93.39%▲は、戦闘の最初のヒットから自分に乗る（説明文の値のまま）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
+  - 根拠: `1444-01`・`1444-02`・`1445-01`・`1445-02`・`1446-23`。V-0900
+  - モデル側: data/skills/582.json（skill1 の妄想の付与と、skill2 の戦闘開始から終わりまでの条件付きの timed）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: ゲージ速度と攻撃力の倍率は説明文の値（skill2 の {01}・{02}）、1 ヒットの式とゲージの量は確定の結論のまま
+  - 検証記録: V-0900
+  - 定義: `data/skills/582.json` の skill1 の effects[0]、`data/skills/582.json` の skill1 の notes[0]、`data/skills/582.json` の skill1 の notes[1]、`data/skills/582.json` の skill2 の effects[0]、`data/skills/582.json` の skill2 の effects[1]
+- **C-1620** レーベルのバーストの妄想共有は、バーストの使用から 10 秒付き、その間だけ S2 の攻撃力▲が、レーベルを除く味方全体に、レーベルのバフ前攻撃力の 80.36%（スキル発動者基準）として乗る。レーベル自身の 1 ヒットは変わらない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
+  - 根拠: `1446-24`・`1446-25`・`1446-26`・`1446-27`・`1446-28`。V-0900
+  - モデル側: data/skills/582.json（burst の妄想共有の付与と、skill2 の passive の excludeSelf・while）。packages/core/src/skills/parse/timed.ts の parsePassiveEffect・skills/composition.ts の fixedTargetsOf（passive の自分を除く）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 攻撃力▲の量は説明文の値（skill2 の {04}）とスキル発動者基準の式（casterAttack）、10 秒は説明文の値（burst の {03}）
+  - 検証記録: V-0900
+  - 定義: `data/skills/582.json` の skill2 の effects[2]、`data/skills/582.json` の burst の effects[0]
 
 ## 敵・的・場面
 
