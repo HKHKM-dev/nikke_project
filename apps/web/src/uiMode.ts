@@ -14,14 +14,23 @@ export function parseUiMode(value: string | null): UiMode {
   return value === 'modern' ? 'modern' : 'classic';
 }
 
-export function useUiMode(): [UiMode, (mode: UiMode) => void] {
-  const [mode, setMode] = useState<UiMode>(() => parseUiMode(readStorage(UI_MODE_STORAGE_KEY)));
+export function readUiMode(): UiMode {
+  return parseUiMode(readStorage(UI_MODE_STORAGE_KEY));
+}
 
-  // モダンのときはルート要素に data-app-ui="modern" を付け、modern.css（ページの背景と部品の色・形）を効かせる
+/** モダンのときはルート要素に data-app-ui="modern" を付け、modern.css（ページの背景と部品の色・形）を効かせる */
+export function applyUiMode(mode: UiMode) {
+  if (mode === 'modern') document.documentElement.setAttribute('data-app-ui', 'modern');
+  else document.documentElement.removeAttribute('data-app-ui');
+}
+
+export function useUiMode(): [UiMode, (mode: UiMode) => void] {
+  const [mode, setMode] = useState<UiMode>(readUiMode);
+
+  // 読み込んだときの分は、最初の描画の前に main.tsx が当てている
   useEffect(() => {
     writeStorage(UI_MODE_STORAGE_KEY, mode);
-    if (mode === 'modern') document.documentElement.setAttribute('data-app-ui', 'modern');
-    else document.documentElement.removeAttribute('data-app-ui');
+    applyUiMode(mode);
   }, [mode]);
 
   return [mode, setMode];

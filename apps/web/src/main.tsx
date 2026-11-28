@@ -4,7 +4,14 @@ import { App } from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import './styles.css';
 import './modern.css';
+import { applyTheme, readTheme } from './theme.ts';
 import { installTouchLog } from './touchLog.ts';
+import { applyUiMode, readUiMode } from './uiMode.ts';
+
+// 保存してある表示（モダン・クラシック）とテーマは、最初の描画の前に当てる。React の useEffect は描画の後に動くので、
+// そこで当てると、最初の一瞬はクラシックの見た目で描かれ、ボタンの枠の色の transition でちらつく
+applyUiMode(readUiMode());
+applyTheme(readTheme());
 
 // ?touchlog を付けたときだけ、タッチの知らせを画面の下に書き出す（touchLog.ts）
 installTouchLog();

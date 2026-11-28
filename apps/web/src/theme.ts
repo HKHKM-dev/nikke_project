@@ -19,27 +19,36 @@ export function parseTheme(value: string | null): Theme {
 /** 上書きする前のルート要素の style の color-scheme（表示枠が当てたもの）。システムに戻すときに元へ戻す */
 let hostColorScheme: { value: string; priority: string } | null = null;
 
-export function useTheme(): [Theme, (theme: Theme) => void] {
-  const [theme, setTheme] = useState<Theme>(() => parseTheme(readStorage(THEME_STORAGE_KEY)));
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'system') {
-      root.removeAttribute('data-app-theme');
-      if (hostColorScheme !== null) {
-        if (hostColorScheme.value === '') root.style.removeProperty('color-scheme');
-        else root.style.setProperty('color-scheme', hostColorScheme.value, hostColorScheme.priority);
-        hostColorScheme = null;
-      }
-    } else {
-      if (hostColorScheme === null) {
-        hostColorScheme = {
-          value: root.style.getPropertyValue('color-scheme'),
-          priority: root.style.getPropertyPriority('color-scheme'),
-        };
-      }
-      root.setAttribute('data-app-theme', theme);
-      root.style.setProperty('color-scheme', theme, 'important');
+export function readTheme(): Theme {
+  return parseTheme(readStorage(THEME_STORAGE_KEY));
+}
+
+export function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  if (theme === 'system') {
+    root.removeAttribute('data-app-theme');
+    if (hostColorScheme !== null) {
+      if (hostColorScheme.value === '') root.style.removeProperty('color-scheme');
+      else root.style.setProperty('color-scheme', hostColorScheme.value, hostColorScheme.priority);
+      hostColorScheme = null;
     }
+  } else {
+    if (hostColorScheme === null) {
+      hostColorScheme = {
+        value: root.style.getPropertyValue('color-scheme'),
+        priority: root.style.getPropertyPriority('color-scheme'),
+      };
+    }
+    root.setAttribute('data-app-theme', theme);
+    root.style.setProperty('color-scheme', theme, 'important');
+  }
+}
+
+export function useTheme(): [Theme, (theme: Theme) => void] {
+  const [theme, setTheme] = useState<Theme>(readTheme);
+  // 読み込んだときの分は、最初の描画の前に main.tsx が当てている
+  useEffect(() => {
+    applyTheme(theme);
     writeStorage(THEME_STORAGE_KEY, theme);
   }, [theme]);
   return [theme, setTheme];
