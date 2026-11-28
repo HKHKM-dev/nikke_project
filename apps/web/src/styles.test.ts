@@ -32,7 +32,9 @@ describe('最適編成計算のポップアップの配置（styles.css）', () 
     expect(top).toBeDefined();
     expect(top).not.toContain('%');
     expect(top).not.toBe(center.get('top'));
-    const [x, y] = panel.get('translate')!.split(/\s+/);
+    const translate = panel.get('translate');
+    expect(translate).toBeDefined();
+    const [x, y] = translate!.split(/\s+/);
     expect(x).toBe('-50%');
     expect(y).toBe('0');
   });
