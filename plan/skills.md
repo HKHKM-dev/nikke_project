@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 186・効果 1279（根拠あり 1257）・notes 405（根拠あり 171）
+件数: キャラ 187・効果 1285（根拠あり 1263）・notes 409（根拠あり 174）
 
-notes の種類: 未対応 24・前提の外 143・計算に無関係 88・補足 45・間接 105
+notes の種類: 未対応 24・前提の外 146・計算に無関係 88・補足 45・間接 106
 
-スロット: supported 517・partial 18・unsupported 5・noEffect 75
+スロット: supported 520・partial 18・unsupported 5・noEffect 75
 
 ## 10 ラピ
 
@@ -2415,6 +2415,22 @@ notes の種類: 未対応 24・前提の外 143・計算に無関係 88・補�
   - effects[0] timed・burstUse・attackDamage: C-1283（確定）
   - effects[1] timed・burstUse・dotEffect: C-1283（確定）
   - effects[2] timed・burstUse・attack: C-1283（確定）
+
+## 521 クラスト
+
+- **skill1**: supported
+  - effects[0] state・partialChargeShot・maillard（attack）: C-1594（確定）、C-1001（確定）
+  - effects[1] stateExtend・fullChargeShot: C-1595（確定）
+  - notes[0] 前提の外: フルチャージ状態を 1 秒以上 3 回維持した時の味方全体のブランチング（スキル発動者基準の攻撃力▲・メイラード解除）と、フルチャージして攻撃した時のブランチングの維持時間▲・メイラードの付与に付いたブランチング解除は、オートの射撃ではフルチャージを保たず、ブランチングが付かないので起きない（要件 4.2 節）: C-0839（確定）
+- **skill2**: supported
+  - effects[0] removeDebuff・partialChargeShot・デバフ 1 個: C-1594（確定）、C-0979（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1596（確定）、C-0839（確定）
+  - notes[0] 間接（防御力）: たっぷりクッキングのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 前提の外: フルチャージ状態を 1 秒以上維持して 3 回攻撃した時のたっぷりクッキング（防御力▲・デバフ効果解除 1 個）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）: C-0839（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1597（確定）
+  - effects[1] timed・burstUse・distributedDamage: C-1597（確定）
+  - notes[0] 前提の外: ブランチング状態の時の味方全体の持続ダメージ▲は、ブランチングが付かない（フルチャージ状態を 1 秒以上維持するきっかけがオートの射撃で起きない）ので起きない（要件 4.2 節）: C-0839（確定）
 
 ## 570 アークレンジャー・ブラック
 
