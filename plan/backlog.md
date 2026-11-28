@@ -114,21 +114,21 @@
 
 1 行の形は「題名（起票日）→ 状態: 設計書（あれば）。残りの行き先（この文書の節か行）」。状態は「進行中」「一部完了」「保留」などの一語に、要るときだけ短い括弧（撮影待ちの部分など）を添える。進み具合は設計書の経過に書く。題名は変えない（開いている課題を記録が題名で指す）。行は状態が変わったときだけ直し、閉じたら消す。
 
-- 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
-- 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
-- SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
-- 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは 2-1
-- アニス：スター（17）の S1（2026-10-03）→ 一部完了: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)。残りは 6 節
-- 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 一部完了: [design-true-damage-element.md](design-true-damage-element.md)・[design-delayed-skill-hit.md](design-delayed-skill-hit.md)。残りは 6 節
-- 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
-- アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
-- 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
-- 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留（作り直しはしない。オーナーの判断）: [design-modern-ui.md](design-modern-ui.md)
-- plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 完了（2026-11-23。消して縮めた。振る舞いは 2.6 節）: [design-modern-ui.md](design-modern-ui.md)
+- 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了（残りはデータ待ちと、合わない取得の調べ）: [design-combat-power-sort.md](design-combat-power-sort.md) 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- アニス：スター（17）の S1（2026-10-03）→ 完了（2026-11-08。残りの未対応の notes は無くなった）: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)・[design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)
+- アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 閉じた（2026-11-28。残りのうち、コアダメージ▲は入れ、窓でコアの割合が変わるかは問い不成立にし、遠の割合の食い違いはモデルを変えないと決めていた）: [design-anis-star-core-path.md](design-anis-star-core-path.md) 11 節・12 節
+- 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 閉じた（2026-11-28。残りは 3 節の録画 0165 の許容外の行だけで、行は残す）: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md) 11.8 節
+- 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 完了（2026-11-28。語彙は定義で使っている。残りの未対応は 6 節と [skills.md](skills.md)）: [design-true-damage-element.md](design-true-damage-element.md)・[design-delayed-skill-hit.md](design-delayed-skill-hit.md)
+- 対象の語彙（2026-10-05）→ 完了（2026-11-28。語彙は定義で使っている。残りの未対応は 6 節と [skills.md](skills.md)）: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)
+- 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 閉じた（2026-11-28。残りは 2-1（保留）だけで、行は残す）: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)
+- SG の命中率（2026-10-01）→ 閉じた（2026-11-28。残りは 2-1（保留）だけで、行は残す）: [design-sg-hit-rate.md](design-sg-hit-rate.md)
+- 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 閉じた（2026-11-28。残りは 1.2 節の行（▲が 2 つ以上重なったとき）だけで、行は残す）: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)
+- 単騎の与ダメージの許容外（2026-09-28 起票）→ 閉じた（2026-11-28。残りは 3 節の行だけで、行は残す）: [design-stage22.md](design-stage22.md) 8 節
+- plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 完了（2026-11-23。消して縮めた。振る舞いは 2.6 節）: [design-modern-ui.md](design-modern-ui.md)
+- モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 閉じた（2026-11-28。作り直しはしない（2026-11-22 のオーナーの判断）。挙がっていた仕組みは、行を作り直さなくても要るか、行と関係しない）: [design-modern-ui.md](design-modern-ui.md)
 - 衝突の直し（auto-rebase）の `PRS` を、使う欄だけにする（2026-11-23 起票）→ 完了（2026-11-28。`--prepare` が読む欄だけにし、上限に入りきらない PR は次の実行に回す。`prepare`・`push` の組み立てと `ci-generated.ts` の `--export`・`--commit` の本体にテストを足した）: [design-deploy-key-scope.md](design-deploy-key-scope.md) 5 節
 - モダン UI の重複を 1 つにまとめる（PartyTabs と PartyRowLabel の番号ボタン、App.tsx の編成を直す 3 つの関数の applyPartiesChange、行・番号の DOM を引く partyCardAt・slotsGridOf・partyLabelOf・rowsOf・labelOf、ドラッグを始める距離 4px と CLICK_SLOP、PreviewCard と PartyRowLabel のドロップ・ドラッグの配線、size と tallImage の二重、flight.ts の透明にする動きの重複）（2026-11-22 起票）→ 完了（2026-11-22）: [design-modern-ui.md](design-modern-ui.md)
 - 50KB を超えた設計書を、設計書として要らない記述を消して縮める（2026-11-21 起票）→ 完了（2026-11-21）: [design-design-doc-trim.md](design-design-doc-trim.md)
