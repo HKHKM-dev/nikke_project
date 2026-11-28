@@ -63,6 +63,19 @@ describe('Popover', () => {
     expect(screen.queryByRole('dialog', { name: '設定' })).toBeNull();
   });
 
+  it('panelClassName を枠のクラスに足す', () => {
+    render(
+      <Popover button="開く" buttonClassName="b" label="設定" align="center" panelClassName="extra">
+        <p>中身</p>
+      </Popover>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '設定' }));
+    expect(screen.getByRole('dialog', { name: '設定' }).className).toBe('popover-panel popover-panel-center extra');
+    cleanup();
+    renderOpened();
+    expect(screen.getByRole('dialog', { name: '設定' }).className).toBe('popover-panel popover-panel-left');
+  });
+
   it('画面の端からはみ出すと横にずらし、center ではずらさない', () => {
     // 枠の左端が画面の左の外にある
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(
