@@ -275,3 +275,7 @@
 
 - 定義（`data/skills/95.json` の burst の effects[1]）: `projectileExplosion: true` と `claims` に C-0376。burst のスロットは supported。
 - 録画 0287 の炸裂弾（`0287-05`・`0287-08` の 2〜5 回目）と合い、`0287-05` は比べる観測値に、`0287-08` の 2〜5 回目はテスト（`__tests__/eunhwaTuWeaponChange.test.ts`）で固定した（1 回目は着弾の前にカモフラージュが外れた回で前提の外）。
+
+## 11. 経過
+
+- 2026-11-28: 課題を閉じた。語彙は定義で使っていて、残りの未対応は backlog 6 節と [skills.md](skills.md) で扱う。

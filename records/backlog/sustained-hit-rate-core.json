@@ -1,5 +1,5 @@
 {
-  "section": "8",
-  "order": 50,
-  "text": "持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節"
+  "section": "8.2",
+  "order": -48,
+  "text": "持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 閉じた（2026-11-28。残りは 1.2 節の行（▲が 2 つ以上重なったとき）だけで、行は残す）: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)"
 }

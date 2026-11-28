@@ -128,3 +128,7 @@ S1（スターフォール）の説明文を 1 行ずつ分ける（{NN} は des
 - 画面は、効果ごとに「部隊構成: 自分を除くバースト I の味方がいない / いるとき。この編成では効く / 効かない（計算に入れない）」を出す（`SkillSection.tsx` の `SquadNote`。編成のキャラは `App.tsx` から渡す）。CLI は `squad conditions` の表を出す。
 - 指標 `perShotHitDamage` は 1 ヒットの値の指標（`HIT_VALUE_METRICS`）に入れ、差 1 未満を厳密一致にする。`PER_SHOT_DAMAGE_CORE` が true のときは使えない（例外）。
 - 編成のテスト（`__tests__/anisStarTeam.test.ts`）の「クラウンをリターに替えた編成」は、calc の平均で数える群でアニス：スターの発の数が sim より少なく、枠の合計の差が 5% を少し超える（calc のハイブリッドの近似。backlog 4-5）。部隊構成の条件とは別なので、この編成だけ 5% の検査を外した。
+
+## 9. 経過
+
+- 2026-11-28: 課題「アニス：スター（17）の S1」を閉じた。残りの未対応の notes は [design-anis-star-unimplemented.md](design-anis-star-unimplemented.md) で無くなっていた（8 節）。

@@ -1,5 +1,5 @@
 {
-  "section": "8",
-  "order": 90,
-  "text": "アニス：スター（17）の S1（2026-10-03）→ 一部完了: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)。残りは 6 節"
+  "section": "8.2",
+  "order": -55,
+  "text": "アニス：スター（17）の S1（2026-10-03）→ 完了（2026-11-08。残りの未対応の notes は無くなった）: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)・[design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)"
 }
