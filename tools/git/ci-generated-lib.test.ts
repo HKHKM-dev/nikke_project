@@ -161,7 +161,7 @@ describe('exportGenerated and restoreGenerated', () => {
     expect(readFileSync(join(out, 'plan/captures/recordings.md'), 'utf8')).toBe('r');
     expect(existsSync(join(out, 'README.md'))).toBe(false);
   });
-  it('throws when a generated file is missing, so the artifact is never partial', () => {
+  it('throws when a generated file is missing, failing the job', () => {
     const root = tree({ 'plan/claims.md': 'c' });
     expect(() => exportGenerated(root, tree({}), PATHS)).toThrow();
   });
