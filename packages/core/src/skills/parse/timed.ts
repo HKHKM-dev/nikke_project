@@ -414,6 +414,10 @@ function parseTimedTarget(
     narrowing.excludeSelf = excludeSelf;
   }
   Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
+  // 順位の対象の段階の絞り込みは「自分を除く」と組まない（足りないときに足す自分が段階で絞れない。使い手がいない。
+  // plan/design-lowest-attack.md 2.2 節）
+  if (narrowing.targetBurstStep !== undefined && narrowing.excludeSelf !== undefined && isAttackRanked(target))
+    fail(`${path}.targetBurstStep`, `cannot be combined with excludeSelf on target "${target}"`);
   // 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）
   if (v.targetLeftmost !== undefined) {
     if (v.targetLeftmost !== true) fail(`${path}.targetLeftmost`, 'must be true');

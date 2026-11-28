@@ -118,3 +118,33 @@ describe('順位', () => {
     expect(fixedTargetsOf(effect, [ii, iii, iii, ii], 1)).toEqual([1, 2]);
   });
 });
+
+describe('順位の対象の段階の絞り込みを書けない組', () => {
+  it('rejects excludeSelf with targetBurstStep, and targetBurstStep on heal and state grants', () => {
+    expect(() =>
+      parse({ ...liberalio, target: 'topAttack', excludeSelf: 'unlessShort', stat: 'attack', scaling: undefined }),
+    ).toThrow(/cannot be combined with excludeSelf/);
+    expect(() =>
+      parse({
+        kind: 'heal',
+        trigger: 'fullBurstStart',
+        target: 'topAttack',
+        targetCount: 1,
+        targetBurstStep: 'Step3',
+        ref: 1,
+      }),
+    ).toThrow(/is only allowed in timed/);
+    expect(() =>
+      parse({
+        kind: 'state',
+        state: 'ragingCurrent',
+        trigger: 'fullBurstStart',
+        target: 'topAttack',
+        targetCount: 1,
+        targetBurstStep: 'Step3',
+        durationRef: 1,
+        contents: [{ stat: 'attackDamage', ref: 2 }],
+      }),
+    ).toThrow(/is only allowed in timed/);
+  });
+});

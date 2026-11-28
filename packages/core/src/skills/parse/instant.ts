@@ -11,6 +11,7 @@ import {
   type InstantEffect,
   type InstantKind,
   isAppliedTrigger,
+  isAttackRanked,
   isEndedTrigger,
   isShotCountTrigger,
   isWeaponChangeEndTrigger,
@@ -151,6 +152,9 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   if (targetClass !== undefined) effect.targetClass = targetClass;
   // heal の「基本バースト段階が N の」と「（自分と）両隣」（欄の一覧で heal だけに限ってある。timed と同じ検査）
   Object.assign(effect, parsePersonaTargetFields(v, target, path));
+  // 順位の対象の段階の絞り込みは timed だけ（使い手がいない。plan/design-lowest-attack.md 2.2 節）
+  if (v.targetBurstStep !== undefined && isAttackRanked(target))
+    fail(`${path}.targetBurstStep`, `is only allowed in timed with target "${target}"`);
   // heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
   parseInstantKindFields(v, effect, path);
