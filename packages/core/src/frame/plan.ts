@@ -753,13 +753,6 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
   // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
   const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
-  /** 1 パス目が追ったクールタイムの印のある周期の発火（どの印のある周期も 1 パス目が記録する） */
-  const cooldownFiresOf = (slotIndex: number, skill: SkillSlot): number[] => {
-    const record = cooldownTimerFires.find((c) => c.slotIndex === slotIndex && c.skill === skill);
-    if (record === undefined)
-      throw new Error(`the first pass has no cooldown timer fires for slot ${slotIndex} ${skill}`);
-    return record.frames;
-  };
   for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
     // delayFrames があれば、きっかけの後のフレームに
     // そのフレームのバフで出す（発動の直前のバフで固定しない。plan/design-delayed-skill-hit.md 3.1 節）。戦闘の終わりを越えるヒットは出さない
@@ -807,7 +800,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
             : isResolvedTimer(t)
               ? // クールタイムの印のある周期は 1 パス目の記録（plan/design-arcana-magician.md 2.1 節）
                 t.cooldown === true
-                ? cooldownFiresOf(slotIndex, effect.source.skill)
+                ? cooldownFiresOf(cooldownTimerFires, slotIndex, effect.source.skill)
                 : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
                     self.stateHolds({ state, present: true }, f),
                   )
@@ -904,10 +897,23 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
   }
 }
 
+/** 1 パス目が追ったクールタイムの印のある周期の発火（どの印のある周期も 1 パス目が記録する） */
+function cooldownFiresOf(
+  cooldownTimerFires: SkillHitsInput['cooldownTimerFires'],
+  slotIndex: number,
+  skill: SkillSlot,
+): number[] {
+  const record = cooldownTimerFires.find((c) => c.slotIndex === slotIndex && c.skill === skill);
+  if (record === undefined)
+    throw new Error(`the first pass has no cooldown timer fires for slot ${slotIndex} ${skill}`);
+  return record.frames;
+}
+
 /** 枠の持続ダメージ（dot）の tick を積む */
 function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
-  const { history, schedule, frames, shots, enemySpans, enemyGrantStacksAt } = ctx;
-  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, push } = s;
+  const { history, schedule, frames, shots, enemySpans, enemyGrantStacksAt, cooldownTimerFires } = ctx;
+  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, push, sequential } = s;
+  const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   // 持続ダメージの付くフレーム（plan/design-skill-stage13.md 2.3 節）。{ counterFull } の perCount は、発火の
   // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
   const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
@@ -916,11 +922,25 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     // 「〈状態〉が適用された時」は、その状態が自分に付いたフレーム（plan/design-skill-stage19.md 2.1 節。論点 4）
     if (isResolvedApplied(t)) return appliedFrames(history, t.applied, slotIndex);
     if (!isCounterFullTrigger(t)) {
-      const at = triggerFrames(t, schedule, slotIndex, frames, shots);
+      // クールタイムの印のある周期は 1 パス目の記録（damage と同じ。plan/design-sakura-bis.md 2.1 節）
+      const at =
+        isResolvedTimer(t) && t.cooldown === true
+          ? cooldownFiresOf(cooldownTimerFires, slotIndex, effect.source.skill)
+          : triggerFrames(t, schedule, slotIndex, frames, shots);
       const held =
         effect.condition === undefined
           ? at
           : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
+      // バーストのヒットごとに付ける dot は、条件を発火のフレームで 1 回判定し、その発動の分かれたヒットのフレームのそれぞれで付ける
+      // （damage の perBurstHit と同じ見え方。plan/design-sakura-bis.md 2.2 節）
+      if (effect.perBurstHit === true) {
+        if (sequential) throw new RangeError('a sequential burst cannot have a perBurstHit dot');
+        return held.flatMap((f) => {
+          const activation = mine.find((a) => effectFrameOf(a) === f);
+          if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${f}`);
+          return hitFramesOf(activation).filter((hit) => hit < frames);
+        });
+      }
       // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。条件は発火のフレーム、tick の値は tick のフレームで読む
       const delay = effect.dot!.applyDelayFrames ?? 0;
       return delay === 0 ? held : held.map((f) => f + delay).filter((f) => f < frames);

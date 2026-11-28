@@ -159,7 +159,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   condition?: EffectCondition;
   /** きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
   delayFrames?: number;
-  /** バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
+  /** バーストの倍率ダメージの分かれたヒットのそれぞれに出す（dot はそれぞれで付ける。frame/plan.ts の planSkillHits） */
   perBurstHit?: true;
   /** 1 回の発動のヒット数と、ヒットの間（フレーム。plan/design-new-chars-1029.md 5.2 節） */
   hits?: number;
@@ -737,6 +737,8 @@ export function resolveDotEffects(
         r.perCountIntervalFrames = effect.perCountIntervalFrames!;
       }
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
+      // バーストのヒットごとに付ける（frame/plan.ts の dot の付くフレーム。plan/design-sakura-bis.md 2.2 節）
+      if (!auto && effect.perBurstHit === true) r.perBurstHit = true;
       // 付くフレームの条件（frame/plan.ts の dotApplicationFrames が絞る）
       if (!auto && effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       // 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）。

@@ -495,8 +495,8 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
     entries[slot]?.effects.forEach((e, i) => {
       if (!('trigger' in e) || !isTimerTrigger(e.trigger) || e.trigger.cooldown !== true) return;
       const path = `${root}.${slot}.effects[${i}].trigger.cooldown`;
-      if (e.kind !== 'damage' && e.kind !== 'burstGaugeHit' && e.kind !== 'timed')
-        fail(path, `cooldown is only allowed in damage, burstGaugeHit and timed, got ${e.kind}`);
+      if (e.kind !== 'damage' && e.kind !== 'burstGaugeHit' && e.kind !== 'timed' && e.kind !== 'dot')
+        fail(path, `cooldown is only allowed in damage, burstGaugeHit, timed and dot, got ${e.kind}`);
       if (e.trigger.carry === true || e.trigger.atStart === true)
         fail(path, 'cooldown cannot be used with carry or atStart');
       if (e.kind === 'damage' && (e.periodShorten !== undefined || e.gaugePerHit !== undefined))

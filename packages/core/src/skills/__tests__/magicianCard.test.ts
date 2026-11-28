@@ -85,7 +85,7 @@ describe('読み込み', () => {
           ref: 1,
         },
       ],
-      /only allowed in damage, burstGaugeHit and timed/,
+      /only allowed in damage, burstGaugeHit, timed and dot/,
     );
     fails(
       [s2({ everySeconds: 15, cooldown: true }), s2({ everySeconds: 10, cooldown: true })],

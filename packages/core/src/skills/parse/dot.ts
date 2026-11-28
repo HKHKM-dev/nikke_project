@@ -129,6 +129,7 @@ export const PLAIN_DOT_REJECTED_KEYS = [
   'condition',
   'tickIntervalFrames',
   'hitOnApply',
+  'perBurstHit',
 ] as const;
 
 function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
@@ -171,6 +172,8 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   parseDotCounter(v, effect, path);
   parseDotStacks(v, effect, path);
   parseDotGauge(v, effect, path);
+  parseDotPerBurstHit(v, effect, path);
+  validateCooldownDot(effect, path);
   parseAssumes(v, effect, path);
   return effect;
 }
@@ -362,6 +365,39 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
       timer ? 'needs firstTick atApplication or afterInterval' : 'needs firstTick afterInterval',
     );
   }
+}
+
+/**
+ * バーストのヒットごとに付ける（perBurstHit。plan/design-sakura-bis.md 2.2 節）。付くフレームは frame/plan.ts の dot の付くフレームだけが
+ * 決めるので、付くフレームをほかで追うもの（名前の付いた状態は件の一覧、ゲージは 1 パス目）と、付くフレームを動かす欄とは組まない
+ */
+function parseDotPerBurstHit(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (v.perBurstHit === undefined) return;
+  const key = `${path}.perBurstHit`;
+  if (v.perBurstHit !== true) fail(key, 'expected true');
+  if (effect.trigger !== 'burstUse') fail(key, 'perBurstHit needs the trigger "burstUse"');
+  for (const other of [
+    'state',
+    'delayFrames',
+    'tickDelayFrames',
+    'stacksFrom',
+    'restartOnReapply',
+    'gaugeOnApply',
+    'gaugeOnApplyDelayFrames',
+    'gaugeOnTick',
+  ])
+    if (v[other] !== undefined) fail(key, `perBurstHit cannot be used with ${other}`);
+  effect.perBurstHit = true;
+}
+
+/**
+ * クールタイムの印のある周期の dot（plan/design-sakura-bis.md 2.1 節）。付くフレームは frame/plan.ts が 1 パス目のクールタイムの発火の
+ * 記録で決める。名前の付いた状態の dot は件の一覧が付くフレームを別に追うので組まない（ゲージは validateTimerDotGauge が弾く）
+ */
+function validateCooldownDot(effect: DotEffect, path: string): void {
+  const trigger = effect.trigger;
+  if (!isTimerTrigger(trigger) || trigger.cooldown !== true) return;
+  if (effect.state !== undefined) fail(`${path}.state`, 'a dot on a cooldown timer cannot apply a state');
 }
 
 /** 周期のきっかけの dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/gaugeEffects.ts が発火のフレームで予約する */
