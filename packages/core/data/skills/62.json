@@ -83,16 +83,14 @@
           "scaling": "casterAttack",
           "ref": 2,
           "durationRef": 3
-        },
+        }
+      ],
+      "notes": [
         {
-          "kind": "removeDebuff",
-          "trigger": "burstUse",
-          "target": "allies",
-          "count": 1,
-          "assumes": {
-            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（ココア・クレアのバーストと同じ読み）。ミカ：スノーバディでは確かめていない。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）",
-            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (the same reading as Cocoa's and Claire's Bursts). Not verified for Mica: Snow Buddy. Hangover (stun) is not removed, since that has not been checked (not implemented)"
-          }
+          "ja": "味方全体の「デバフ効果解除 1 個」は、それ自体は与ダメージを変えない（味方にデバフ（ほろ酔い・時間の▼）を付ける効果のいる編成でだけ効く。ミカ：スノーバディでは外す数え方・時刻を確かめていないので、モデルでは外さない）",
+          "en": "\"Removes 1 debuff\" on all allies does not change damage by itself (it matters only with an effect that puts a debuff (Drunken, a timed debuff) on allies; how many and when it removes are not verified for Mica: Snow Buddy, so the model does not remove)",
+          "kind": "indirect",
+          "path": "debuff"
         }
       ]
     }
